@@ -112,7 +112,7 @@
       "<div><h4>Train</h4><ul>" +
       '<li><a href="classes.html">Classes</a></li><li><a href="schedule.html">Schedule</a></li><li><a href="membership.html">Membership</a></li><li><a href="visit.html#trial">Free first class</a></li></ul></div>' +
       "<div><h4>The gym</h4><ul>" +
-      '<li><a href="coaches.html">Coaches</a></li><li><a href="events.html">Events</a></li><li><a href="visit.html">Visit</a></li><li><a href="https://hardcorefitnessbootcamp.com/" rel="noopener">Other Hardcore Fitness gyms</a></li></ul></div>' +
+      '<li><a href="coaches.html">Coaches</a></li><li><a href="events.html">Events</a></li><li><a href="visit.html">Visit</a></li></ul></div>' +
       "</div>" +
       '<div class="footer-base"><span>&copy; ' + y + " Hardcore Fitness Winter Garden. Hardcore Fitness&reg; is a registered trademark.</span><span>Winter Garden, Florida</span></div>" +
       "</div></footer>";
@@ -131,7 +131,8 @@
   };
   function poly(pts, dx) { return pts.map(function (p) { return (p[0] + dx).toFixed(2) + "," + p[1].toFixed(2); }).join(" "); }
 
-  function ledSVG(text) {
+  // tight: close the empty left half of a "1" (used where unlit segments are hidden)
+  function ledSVG(text, tight) {
     var x = 0, out = "";
     String(text).split("").forEach(function (ch) {
       if (ch === ":") {
@@ -140,6 +141,8 @@
         return;
       }
       var lit = SEG[ch] !== undefined ? SEG[ch] : "";
+      var shift = tight && ch === "1" ? W - T - 2 : 0;
+      x -= shift;
       "abcdefg".split("").forEach(function (s) {
         out += '<polygon class="' + (lit.indexOf(s) > -1 ? "on" : "off") + '" points="' + poly(SEGS[s], x) + '"/>';
       });
@@ -149,7 +152,7 @@
     return '<svg viewBox="-3 -1 ' + (x + 6) + ' 42" aria-hidden="true" focusable="false"><g transform="skewX(-6) translate(4 0)">' + out + "</g></svg>";
   }
   function led(text, suffix, label, cls) {
-    return '<span class="led' + (cls ? " " + cls : "") + '">' + ledSVG(text) + (suffix ? '<span class="led-suffix" aria-hidden="true">' + suffix + "</span>" : "") +
+    return '<span class="led' + (cls ? " " + cls : "") + '">' + ledSVG(text, /led--bare/.test(cls || "")) + (suffix ? '<span class="led-suffix" aria-hidden="true">' + suffix + "</span>" : "") +
       '<span class="sr-only">' + esc(label || text + (suffix ? " " + suffix : "")) + "</span></span>";
   }
   window.HF.led = led;
@@ -272,8 +275,7 @@
       return '<article class="coach" id="' + c.id + '" data-reveal>' + plate(c, i) +
         "<h3>" + esc(c.name) + '</h3><span class="label role">' + esc(c.role) + "</span>" +
         (t.length ? '<div class="teaches">' + t.map(function (k) { return '<span class="chip">' + HF.classes[k].name + "</span>"; }).join("") + "</div>" : "") +
-        "<p>" + (c.bio ? esc(c.bio)
-          : "Bio coming soon. Two or three lines from " + esc(c.name.split(" ")[0]) + " on how they coach and what they love to train.") + "</p>" +
+        (c.bio ? "<p>" + esc(c.bio) + "</p>" : '<p class="bio-pending">Bio coming soon.</p>') +
         "</article>";
     }).join("");
   }
@@ -323,7 +325,7 @@
         var status = live ? '<span class="label status">On the floor now</span>' : isNext ? '<span class="label status">Up next</span>' : "";
         return '<li class="' + (past ? "is-past" : "") + (isNext ? " is-next" : "") + '">' + led(t.digits, t.ampm, t.text) +
           '<span class="cls">' + HF.classes[s[1]].name + "</span>" +
-          '<span class="who">' + esc(coachName(s[2])) + " · 60 min " + status + "</span>" +
+          '<span class="who">' + esc(coachName(s[2])) + " " + status + "</span>" +
           (past ? '<span class="btn btn--small btn--ghost" aria-disabled="true">Done</span>'
                 : '<a class="btn btn--small" href="' + bookHref(state.day, s) + '">Take it free<span class="sr-only"> — ' + HF.classes[s[1]].name + " " + DAYS_LONG[state.day] + " " + t.text + "</span> " + icon.arrow + "</a>") +
           "</li>";
