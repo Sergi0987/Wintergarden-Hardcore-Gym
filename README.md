@@ -39,8 +39,10 @@ Add `?clean=1` to any URL to hide them (for showing the owner). `?clean=0` bring
 
 - [ ] Real photos of the Winter Garden gym, classes and members (current photos are Unsplash stock, see `docs/PHOTOS.md`)
 - [ ] A photo and a 2–3 line bio for each coach
-- [ ] Confirm the coach list and owners (taken from ClassPass listings and a 2018 Orange Observer article)
-- [ ] The real weekly class schedule and who coaches each class
+- [x] Owner (Felix Valentin) and head trainer (Rob Roche) confirmed
+- [ ] Confirm the other coaches (Sergio, Karen, Jordan, David came from ClassPass listings)
+- [x] Real class times
+- [ ] Which class (Lift, Fight Camp, Booty Camp) and which coach runs at each time
 - [ ] Membership prices and what each option includes
 - [ ] Contract / cancellation terms (FAQ answer)
 - [ ] Real upcoming events
