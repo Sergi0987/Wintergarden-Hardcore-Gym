@@ -249,8 +249,7 @@
       return '<article class="coach" id="' + c.id + '" data-reveal>' + plate(c, i) +
         "<h3>" + esc(c.name) + '</h3><span class="label role">' + esc(c.role) + "</span>" +
         (t.length ? '<div class="teaches">' + t.map(function (k) { return '<span class="chip">' + HF.classes[k].name + "</span>"; }).join("") + "</div>" : "") +
-        "<p>" + (c.owner
-          ? "Opened the Winter Garden gym on Beulah Road in October 2018."
+        "<p>" + (c.bio ? esc(c.bio)
           : "Bio coming soon. Two or three lines from " + esc(c.name.split(" ")[0]) + " on how they coach and what they love to train.") + "</p>" +
         "</article>";
     }).join("");
