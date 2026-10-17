@@ -61,7 +61,7 @@ window.HF = {
   },
 
   events: [
-    { date: "2026-10-25", time: "09:15", title: "Bring-a-Friend Saturday", text: "Bring someone who has been asking about the gym. They train free, side by side with you, in the 9:15 Booty Camp.", tags: ["Free for guests", "Booty Camp"] },
+    { date: "2026-10-24", time: "09:15", title: "Bring-a-Friend Saturday", text: "Bring someone who has been asking about the gym. They train free, side by side with you, in the 9:15 Booty Camp.", tags: ["Free for guests", "Booty Camp"] },
     { date: "2026-10-30", time: "18:00", title: "Halloween Fight Camp", text: "Costumes on, gloves on. A regular Fight Camp hour with a playlist to match. Best costume picks the finisher.", tags: ["Members + guests", "Fight Camp"] },
     { date: "2026-11-07", time: "08:00", title: "60-Day Challenge Kickoff", text: "Starting measurements, your meal plan set up in the HCF Diet App, and your first challenge workout. Ends January 6.", tags: ["Sign-up required", "All classes"] },
     { date: "2026-11-26", time: "08:00", title: "Thanksgiving Morning Burn", text: "One big Lift class before the food. Partner stations, all levels.", tags: ["Members + guests", "Lift"] },

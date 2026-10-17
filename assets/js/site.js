@@ -21,11 +21,28 @@
     if (clean === "1") document.documentElement.classList.add("clean");
   })();
 
+  /* ---------- Palette: dark (default) or light. ?theme=light|dark, remembered per visitor ---------- */
+  function setTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem("hf-theme", t); } catch (e) {}
+    document.querySelectorAll(".theme-btn").forEach(function (b) {
+      b.setAttribute("aria-label", t === "light" ? "Switch to dark colors" : "Switch to light colors");
+      b.setAttribute("aria-pressed", String(t === "light"));
+    });
+  }
+  (function () {
+    var q = new URLSearchParams(location.search).get("theme");
+    if (q === "light" || q === "dark") setTheme(q);
+  })();
+
   /* ---------- Icons ---------- */
   var icon = {
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M3 12h17M13 5l7 7-7 7"/></svg>',
     menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>',
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>',
+    sun: '<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>',
+    moon: '<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>'
   };
   window.HF.icon = icon;
@@ -55,12 +72,13 @@
   var headerSlot = document.querySelector("[data-header]");
   if (headerSlot) {
     headerSlot.outerHTML =
-      '<a class="sr-only" href="#main">Skip to content</a>' +
+      '<a class="sr-only skip-link" href="#main">Skip to content</a>' +
       '<header class="site-header"><div class="wrap">' +
-      '<a class="brand" href="index.html" aria-label="Hardcore Fitness Winter Garden, home"><img src="assets/img/logo-panel.png" alt="" width="200" height="90"><span>Winter<br>Garden</span></a>' +
+      '<a class="brand" href="index.html" aria-label="Hardcore Fitness Winter Garden, home"><img class="logo-dark" src="assets/img/logo-panel.png" alt="" width="200" height="90"><img class="logo-light" src="assets/img/logo-panel-black.png" alt="" width="200" height="90"><span>Winter<br>Garden</span></a>' +
       '<nav class="nav" aria-label="Main"><ul>' + navItems("") + "</ul></nav>" +
       '<a class="btn btn--small header-cta" href="visit.html#trial">Free class</a>' +
-      '<button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">' + icon.menu + "</button>" +
+      '<button class="icon-btn theme-btn" type="button" aria-pressed="false" aria-label="Switch to light colors">' + icon.moon + icon.sun + "</button>" +
+      '<button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">' + icon.menu + "</button>" +
       "</div></header>" +
       '<div class="mobile-nav" id="mobile-nav" aria-label="Menu"><ul>' + navItems("big") + "</ul>" +
       '<a class="btn" href="visit.html#trial">Book a free class ' + icon.arrow + "</a>" +
@@ -77,6 +95,11 @@
     };
     btn.addEventListener("click", function () { setMenu(btn.getAttribute("aria-expanded") !== "true"); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && mnav.classList.contains("is-open")) { setMenu(false); btn.focus(); } });
+
+    document.querySelector(".theme-btn").addEventListener("click", function () {
+      setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+    });
+    setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
   }
 
   var footerSlot = document.querySelector("[data-footer]");
@@ -125,8 +148,8 @@
     x -= 5;
     return '<svg viewBox="-3 -1 ' + (x + 6) + ' 42" aria-hidden="true" focusable="false"><g transform="skewX(-6) translate(4 0)">' + out + "</g></svg>";
   }
-  function led(text, suffix, label) {
-    return '<span class="led">' + ledSVG(text) + (suffix ? '<span class="led-suffix" aria-hidden="true">' + suffix + "</span>" : "") +
+  function led(text, suffix, label, cls) {
+    return '<span class="led' + (cls ? " " + cls : "") + '">' + ledSVG(text) + (suffix ? '<span class="led-suffix" aria-hidden="true">' + suffix + "</span>" : "") +
       '<span class="sr-only">' + esc(label || text + (suffix ? " " + suffix : "")) + "</span></span>";
   }
   window.HF.led = led;
@@ -227,7 +250,7 @@
   var strip = document.querySelector("[data-coach-strip]");
   if (strip) {
     strip.innerHTML = HF.coaches.filter(function (c) { return !c.owner; }).map(function (c, i) {
-      return '<a href="coaches.html#' + c.id + '">' + plate(c, i) + "<h3>" + esc(c.name) + '</h3><span class="label">' + esc(teaches(c.id).map(function (k) { return HF.classes[k].name; }).join(" · ")) + "</span></a>";
+      return '<a href="coaches.html#' + c.id + '">' + plate(c, i) + "<h3>" + esc(c.name) + '</h3><span class="label meta">' + esc(c.role === "Coach" ? "" : c.role + " · ") + esc(teaches(c.id).map(function (k) { return HF.classes[k].name; }).join(" · ")) + "</span></a>";
     }).join("");
   }
 
@@ -260,7 +283,7 @@
     var key = el.getAttribute("data-next-times");
     el.innerHTML = upcoming(4, key).map(function (u) {
       var t = clock12(u.slot[0]);
-      return '<a href="' + bookHref(u.day, u.slot) + '"><span class="day">' + dayWord(u.offset, u.day) + " · " + esc(firstName(u.slot[2])) + "</span>" + led(t.digits, t.ampm, dayWord(u.offset, u.day) + " " + t.text) + "</a>";
+      return '<a href="' + bookHref(u.day, u.slot) + '"><span class="day">' + (u.offset === 0 ? "Today" : DAYS[u.day]) + " · " + esc(firstName(u.slot[2])) + "</span>" + led(t.digits.trim(), t.ampm, dayWord(u.offset, u.day) + " " + t.text, "led--bare") + "</a>";
     }).join("");
   });
 
@@ -276,7 +299,7 @@
     var order = [1, 2, 3, 4, 5, 6, 0];
 
     tabs.innerHTML = order.map(function (d) {
-      return '<button type="button" role="tab" data-day="' + d + '" aria-selected="' + (d === state.day) + '">' + DAYS[d] + "<small>" + (d === today ? "Today" : HF.schedule[d].length + " classes") + "</small></button>";
+      return '<button type="button" role="tab" data-day="' + d + '" aria-selected="' + (d === state.day) + '">' + DAYS[d] + "<small>" + (d === today ? "Today" : HF.schedule[d].length + '<span class="w"> classes</span>') + "</small></button>";
     }).join("");
     filters.innerHTML = [["all", "All classes"], ["lift", "Lift"], ["fight", "Fight Camp"], ["booty", "Booty Camp"]].map(function (f) {
       return '<button type="button" data-filter="' + f[0] + '" aria-pressed="' + (f[0] === "all") + '">' + f[1] + "</button>";
@@ -414,8 +437,30 @@
 
   /* ---------- Map embed ---------- */
   document.querySelectorAll("[data-map]").forEach(function (el) {
-    el.innerHTML = '<iframe title="Map to ' + esc(HF.gym.name) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + encodeURIComponent(HF.gym.mapsQuery) + '&output=embed"></iframe>';
+    // The address card sits under the map, so a blocked or slow map still shows where to go.
+    el.innerHTML = '<div class="map-fallback"><strong>1401 Beulah Rd</strong><span>Suite 100, Winter Garden, FL 34787</span>' +
+      '<a class="btn btn--small btn--ghost" href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(HF.gym.mapsQuery) + '" rel="noopener">Get directions</a></div>' +
+      '<iframe title="Map to ' + esc(HF.gym.name) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + encodeURIComponent(HF.gym.mapsQuery) + '&output=embed"></iframe>';
   });
+
+  /* ---------- Phone booking bar: appears after the first screen, hides near the footer ---------- */
+  if (page !== "visit" && "IntersectionObserver" in window) {
+    var bar = document.createElement("div");
+    bar.className = "mobile-cta";
+    bar.innerHTML = '<a class="btn" href="visit.html#trial">Book a free class ' + icon.arrow + '</a>' +
+      '<a class="icon-btn" href="tel:' + HF.gym.tel + '" aria-label="Call ' + HF.gym.phone + '">' + icon.phone + "</a>";
+    document.body.appendChild(bar);
+    var pastTop = false, nearEnd = false;
+    var syncBar = function () { bar.classList.toggle("is-shown", pastTop && !nearEnd); };
+    window.addEventListener("scroll", function () { pastTop = window.scrollY > window.innerHeight * 0.7; syncBar(); }, { passive: true });
+    var ends = new Map();
+    var endObs = new IntersectionObserver(function (en) {
+      en.forEach(function (x) { ends.set(x.target, x.isIntersecting); });
+      nearEnd = Array.from(ends.values()).some(Boolean);
+      syncBar();
+    });
+    document.querySelectorAll(".site-footer, .cta").forEach(function (el) { endObs.observe(el); });
+  }
 
   /* ---------- Reveal on scroll (content stays visible without JS) ---------- */
   if (!reduceMotion && "IntersectionObserver" in window) {
