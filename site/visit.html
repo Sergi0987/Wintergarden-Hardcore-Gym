@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visit + Free Class | Hardcore Fitness Winter Garden</title>
+  <meta name="description" content="Book your free first class at Hardcore Fitness Winter Garden, 1401 Beulah Rd Ste 100, Winter Garden, FL 34787. Call 407-993-7000.">
+  <meta name="theme-color" content="#0d0d0d">
+  <link rel="icon" href="assets/img/logo-mark.png">
+  <link rel="preload" href="assets/fonts/big-shoulders.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body data-page="visit">
+  <div data-header></div>
+
+  <main id="main">
+    <header class="page-head">
+      <div class="bg"><img src="assets/img/photos/gym-floor.jpg" alt=""></div>
+      <div class="wrap">
+        <h1>Come train with us.</h1>
+        <p class="lede">1401 Beulah Rd, Suite 100, in the Beulah Commerce Center. Your first class is free.</p>
+      </div>
+    </header>
+
+    <section class="section" id="trial" aria-labelledby="trial-h">
+      <div class="wrap split">
+        <div>
+          <h2 id="trial-h">Claim your free class.</h2>
+          <p class="lede" style="margin-top:20px">Tell us when you want to come in. A coach will call or text to confirm your spot.</p>
+          <ul class="info-list" style="margin-top:32px">
+            <li><span class="label">Call or text</span><a href="tel:+14079937000">407-993-7000</a></li>
+            <li><span class="label">Address</span><a href="https://www.google.com/maps/dir/?api=1&destination=1401+Beulah+Rd+Ste+100+Winter+Garden+FL+34787" rel="noopener">1401 Beulah Rd, Ste 100<br>Winter Garden, FL 34787</a></li>
+            <li><span class="label">Classes</span><span>Seven days a week. <a href="schedule.html" style="font-size:inherit;font-weight:inherit;text-decoration:underline">See the schedule</a></span></li>
+          </ul>
+        </div>
+
+        <div>
+          <form class="form-grid" data-trial-form novalidate>
+            <div class="field">
+              <label class="label" for="f-name">Your name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+              <span class="err" id="e-name" role="alert"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-phone">Phone</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="407-555-0123" required aria-describedby="e-phone">
+              <span class="err" id="e-phone" role="alert"></span>
+            </div>
+            <div class="field full">
+              <label class="label" for="f-email">Email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email">
+              <span class="err" id="e-email" role="alert"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-class">Class</label>
+              <select id="f-class" name="class" required aria-describedby="e-class"></select>
+              <span class="err" id="e-class" role="alert"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-slot">When</label>
+              <select id="f-slot" name="slot"></select>
+            </div>
+            <div class="field full">
+              <label class="label" for="f-msg">Anything the coach should know?</label>
+              <textarea id="f-msg" name="message" placeholder="Injuries, goals, or questions. Optional."></textarea>
+            </div>
+            <div class="field full">
+              <label class="check"><input type="checkbox" name="first"> <span>This is my first time at a Hardcore Fitness gym.</span></label>
+            </div>
+            <div class="full">
+              <button class="btn" type="submit">Claim my free class
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M3 12h17M13 5l7 7-7 7"/></svg></button>
+            </div>
+          </form>
+          <div class="form-done" data-form-done role="status">
+            <h3>You're on the list.</h3>
+            <p data-done-text></p>
+            <a class="btn btn--ghost btn--small" href="classes.html">Read about the classes</a>
+          </div>
+          <p class="draft">The form is not connected yet. Before launch, send it to the gym's email, CRM or booking system.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" aria-label="Map">
+      <div class="wrap">
+        <div class="map" data-map style="min-height:440px"></div>
+      </div>
+    </section>
+  </main>
+
+  <div data-footer></div>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>

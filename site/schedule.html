@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Class Schedule | Hardcore Fitness Winter Garden</title>
+  <meta name="description" content="This week's Lift, Fight Camp and Booty Camp times at Hardcore Fitness Winter Garden. Pick a class and take it free.">
+  <meta name="theme-color" content="#0d0d0d">
+  <link rel="icon" href="assets/img/logo-mark.png">
+  <link rel="preload" href="assets/fonts/big-shoulders.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body data-page="schedule">
+  <div data-header></div>
+
+  <main id="main">
+    <header class="page-head">
+      <div class="bg"><img src="assets/img/photos/grip.jpg" alt=""></div>
+      <div class="wrap">
+        <h1>This week on the floor.</h1>
+        <p class="lede">Every class is 60 minutes. Tap a time to claim it as your free first class.</p>
+        <p class="draft">Sample times and coach assignments for the draft. Replace them in <code>assets/js/data.js</code> with the real schedule (or connect the booking system).</p>
+      </div>
+    </header>
+
+    <section class="section" style="padding-top:clamp(40px,5vw,64px)" aria-label="Class schedule">
+      <div class="wrap">
+        <div class="sched-controls">
+          <div class="day-tabs" role="tablist" aria-label="Day of the week" data-day-tabs></div>
+          <div class="filters" role="group" aria-label="Filter by class" data-filters></div>
+        </div>
+        <ul class="sched" data-schedule aria-live="polite"></ul>
+        <noscript><p class="sched-empty">Turn on JavaScript to see the schedule, or call 407-993-7000.</p></noscript>
+      </div>
+    </section>
+
+    <section class="band--red cta" aria-labelledby="cta-h">
+      <div class="wrap">
+        <h2 id="cta-h">Can't make these times?</h2>
+        <div>
+          <p>Call or text the front desk. We'll help you find the class that fits your week.</p>
+          <a class="btn btn--ink" href="tel:+14079937000">Call 407-993-7000</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-footer></div>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>
