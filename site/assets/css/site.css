@@ -492,8 +492,14 @@ p { margin: 0 0 1em; max-width: 65ch; }
 }
 @media (max-width: 599px) { .coach-strip { grid-auto-columns: 64%; } }
 
-.coach-grid { display: grid; gap: 48px 24px; grid-template-columns: 1fr; }
-@media (min-width: 600px) { .coach-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.coach-grid { display: grid; gap: 36px 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 600px) { .coach-grid { gap: 48px 24px; } }
+@media (max-width: 599px) {
+  .coach h3 { font-size: 1.5rem; margin-top: 12px; }
+  .coach .plate .initials { font-size: 4rem; }
+  .coach .chip { min-height: 26px; padding: 0 7px; font-size: 0.7rem; }
+  .coach p { font-size: 0.95rem; }
+}
 @media (min-width: 1000px) { .coach-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .coach h3 { font-size: 2.1rem; margin-top: 18px; }
 .coach .role { color: var(--red-text); display: block; margin-top: 8px; }
@@ -744,7 +750,7 @@ form.is-sent + .form-done { display: block; }
 }
 .band--red .draft { border-color: rgba(0, 0, 0, 0.45); color: var(--white); }
 .band--red .draft::before { background: var(--ink); }
-html.clean .draft { display: none; }
+html.clean .draft, html.clean .bio-pending { display: none; }
 .draft code { font-size: 0.85em; color: var(--text); }
 
 /* ---------- Sticky phone CTA ---------- */
@@ -781,3 +787,5 @@ html.clean .draft { display: none; }
   .mosaic img, .class-row .peek, .class-row .peek img, .btn svg, .mobile-cta, body { transition: none; }
 }
 .map--tall { min-height: 440px; }
+.split--center { align-items: center; }
+.bio-pending { color: var(--text-3); font-style: italic; }
