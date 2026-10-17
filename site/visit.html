@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#0d0d0d">
   <link rel="icon" href="assets/img/logo-mark.png">
   <link rel="preload" href="assets/fonts/big-shoulders.woff2" as="font" type="font/woff2" crossorigin>
+  <script>try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("hf-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
   <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body data-page="visit">
@@ -23,18 +24,18 @@
     </header>
 
     <section class="section" id="trial" aria-labelledby="trial-h">
-      <div class="wrap split">
-        <div>
+      <div class="wrap trial">
+        <div class="trial-intro">
           <h2 id="trial-h">Claim your free class.</h2>
           <p class="lede" style="margin-top:20px">Tell us when you want to come in. A coach will call or text to confirm your spot.</p>
-          <ul class="info-list" style="margin-top:32px">
-            <li><span class="label">Call or text</span><a href="tel:+14079937000">407-993-7000</a></li>
-            <li><span class="label">Address</span><a href="https://www.google.com/maps/dir/?api=1&destination=1401+Beulah+Rd+Ste+100+Winter+Garden+FL+34787" rel="noopener">1401 Beulah Rd, Ste 100<br>Winter Garden, FL 34787</a></li>
-            <li><span class="label">Classes</span><span>Seven days a week. <a href="schedule.html" style="font-size:inherit;font-weight:inherit;text-decoration:underline">See the schedule</a></span></li>
-          </ul>
         </div>
+        <ul class="info-list trial-info">
+          <li><span class="label">Call or text</span><a href="tel:+14079937000">407-993-7000</a></li>
+          <li><span class="label">Address</span><a href="https://www.google.com/maps/dir/?api=1&destination=1401+Beulah+Rd+Ste+100+Winter+Garden+FL+34787" rel="noopener">1401 Beulah Rd, Ste 100<br>Winter Garden, FL 34787</a></li>
+          <li><span class="label">Classes</span><span>Seven days a week, from 5:15 a.m. on weekdays. <a class="inline-link" href="schedule.html">See the schedule</a></span></li>
+        </ul>
 
-        <div>
+        <div class="trial-form">
           <form class="form-grid" data-trial-form novalidate>
             <div class="field">
               <label class="label" for="f-name">Your name</label>
@@ -82,9 +83,9 @@
       </div>
     </section>
 
-    <section class="section" style="padding-top:0" aria-label="Map">
+    <section class="section section--flush" aria-label="Map">
       <div class="wrap">
-        <div class="map" data-map style="min-height:440px"></div>
+        <div class="map map--tall" data-map></div>
       </div>
     </section>
   </main>

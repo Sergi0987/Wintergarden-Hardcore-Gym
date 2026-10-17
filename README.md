@@ -35,6 +35,9 @@ Then open http://localhost:4321.
 Pages show dashed **Draft** notes where real info is still needed.
 Add `?clean=1` to any URL to hide them (for showing the owner). `?clean=0` brings them back.
 
+The site has a dark and a light palette (sun/moon button in the header).
+Add `?theme=light` or `?theme=dark` to open a page in one of them.
+
 ## Still needed from the gym (replace before launch)
 
 - [ ] Real photos of the Winter Garden gym, classes and members (current photos are Unsplash stock, see `docs/PHOTOS.md`)
