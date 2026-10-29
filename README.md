@@ -45,6 +45,10 @@ The Visit page has our own styled form. It sends to ClubReady's web lead form
 gym's ClubReady account. The class and time the visitor picks go into the message field.
 Settings (endpoint, key, whether the SMS box is required) are in `site/assets/js/data.js` → `signup`.
 
+It is sent as a background request, so visitors stay on our site. (ClubReady's own reply
+redirects to an old corporate thank-you page. To change that, set ClubReady's thank-you /
+redirect URL to the new site's `thanks.html`.)
+
 This is not an official ClubReady integration: if ClubReady changes their form, sign-ups can
 stop arriving. Send a test sign-up after any change, and every few months.
 
