@@ -40,9 +40,13 @@ footer stay dark on purpose.
 
 ## Free class form
 
-The Visit page embeds the gym's ClubReady lead form (iframe in `site/visit.html`).
-Sign-ups go straight into ClubReady. The form can't be pre-filled from our site, so when a
-visitor clicks a class time, the page shows their pick and asks them to add it to the message box.
+The Visit page has our own styled form. It sends to ClubReady's web lead form
+(`apiformsub.asp`) with the same field names as ClubReady's embed, so sign-ups land in the
+gym's ClubReady account. The class and time the visitor picks go into the message field.
+Settings (endpoint, key, whether the SMS box is required) are in `site/assets/js/data.js` → `signup`.
+
+This is not an official ClubReady integration: if ClubReady changes their form, sign-ups can
+stop arriving. Send a test sign-up after any change, and every few months.
 
 ## Still needed from the gym (replace before launch)
 

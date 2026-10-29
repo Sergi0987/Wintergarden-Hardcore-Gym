@@ -355,27 +355,115 @@
     }).join("");
   }
 
-  /* ---------- Visit page: show the class or event the visitor picked ----------
-     The ClubReady form is hosted by ClubReady, so we can't fill it in for them.
-     Instead we show their pick and ask them to add it to the message box. */
-  var picked = document.querySelector("[data-picked]");
-  if (picked) {
+  /* ---------- Visit page: free class form → ClubReady ----------
+     Our own form, sent to ClubReady's web lead form endpoint with the same field names.
+     It posts into a hidden frame, so the visitor stays here and sees our thank-you.
+     ClubReady's reply is on another site, so we can't read it: a finished load = sent. */
+  var form = document.querySelector("[data-trial-form]");
+  if (form) {
     var q = new URLSearchParams(location.search);
-    var what = "";
-    var cls = HF.classes[q.get("class")];
-    if (cls && q.get("day") && /^\d\d:\d\d$/.test(q.get("time") || "")) {
-      what = cls.name + ", " + DAYS_LONG[+q.get("day")] + " at " + clock12(q.get("time")).text;
-    } else if (cls) {
-      what = cls.name;
-    } else if (q.get("event")) {
-      what = q.get("event");
-    } else if (q.get("plan")) {
-      what = "the " + q.get("plan") + " membership";
-    }
-    if (what) {
-      picked.innerHTML = "<strong>You picked " + esc(what) + ".</strong> Add it to the message box so we can save your spot.";
-      picked.hidden = false;
-    }
+    var selClass = form.querySelector("[data-class]");
+    var selSlot = form.querySelector("[data-slot]");
+    var note = form.querySelector("[data-note]");
+    var status = form.querySelector("[data-form-status]");
+    var submitBtn = form.querySelector("[data-submit]");
+    var target = document.querySelector('iframe[name="cr-target"]');
+    var smsRequired = HF.signup.smsOptInRequired;
+
+    selClass.innerHTML = '<option value="">Pick a class</option>' + Object.keys(HF.classes).map(function (k) {
+      return '<option value="' + k + '">' + HF.classes[k].name + "</option>";
+    }).join("") + '<option value="any">Not sure yet</option>';
+
+    var fillSlots = function (keep) {
+      var k = selClass.value;
+      var list = upcoming(40, k && k !== "any" ? k : null).slice(0, 14);
+      selSlot.innerHTML = '<option value="">Any time that works</option>' + list.map(function (u) {
+        var v = u.day + "|" + u.slot[0];
+        return '<option value="' + v + '"' + (keep === v ? " selected" : "") + ">" + dayWord(u.offset, u.day) + " " + clock12(u.slot[0]).text + " · " + HF.classes[u.slot[1]].name + "</option>";
+      }).join("");
+    };
+    if (HF.classes[q.get("class")]) selClass.value = q.get("class");
+    fillSlots(q.get("day") && q.get("time") ? q.get("day") + "|" + q.get("time") : "");
+    if (q.get("event")) note.value = "I'd like to come to: " + q.get("event");
+    if (q.get("plan")) note.value = "I have a question about the " + q.get("plan") + " membership.";
+    selClass.addEventListener("change", function () { fillSlots(""); });
+
+    var byId = function (id) { return document.getElementById(id); };
+    var rules = [
+      ["f-first", "e-first", function (v) { return v.trim() ? true : "Add your first name."; }],
+      ["f-last", "e-last", function (v) { return v.trim() ? true : "Add your last name."; }],
+      ["f-email", "e-email", function (v) { return !v.trim() ? "Add your email." : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || "That email looks off. Check for a missing @ or dot."; }],
+      ["f-phone", "e-phone", function (v) { return v.replace(/\D/g, "").length >= 10 || "Add a 10-digit phone number so we can confirm your spot."; }],
+      ["f-class", "e-class", function (v) { return v ? true : "Pick a class, or choose \u201cNot sure yet\u201d."; }],
+      ["f-gender", "e-gender", function (v) { return v ? true : "Pick an option. \u201cPrefer not to say\u201d is fine."; }],
+      ["f-sms", "e-sms", function () { return !smsRequired || byId("f-sms").checked || "Check this box so we can text you to confirm your class."; }]
+    ];
+    var check = function (r) {
+      var el = byId(r[0]), res = r[2](el.value), field = el.closest(".field");
+      field.classList.toggle("has-error", res !== true);
+      byId(r[1]).textContent = res === true ? "" : res;
+      el.setAttribute("aria-invalid", String(res !== true));
+      return res === true;
+    };
+    rules.forEach(function (r) {
+      byId(r[0]).addEventListener(r[0] === "f-sms" || r[0].indexOf("class") > -1 || r[0] === "f-gender" ? "change" : "blur", function () {
+        if (byId(r[1]).textContent || byId(r[0]).value) check(r);
+      });
+    });
+
+    var showDone = function (slotText) {
+      var done = document.querySelector("[data-form-done]");
+      done.querySelector("[data-done-text]").textContent =
+        "Thanks, " + byId("f-first").value.trim() + ". A coach will call or text " + byId("f-phone").value.trim() + " to confirm " + slotText + ". Get here 10 minutes early and bring water.";
+      form.classList.add("is-sent");
+      done.focus();
+    };
+    var showFailed = function () {
+      submitBtn.disabled = false;
+      submitBtn.removeAttribute("aria-busy");
+      status.textContent = "We couldn't confirm that it went through. Please call or text 407-993-7000 and we'll book you in.";
+      status.classList.add("is-error");
+    };
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var bad = rules.filter(function (r) { return !check(r); });
+      if (bad.length) { byId(bad[0][0]).focus(); return; }
+
+      // ClubReady has no class or time fields, so the pick travels in the message.
+      var cls = selClass.value === "any" ? "Not sure yet" : HF.classes[selClass.value].name;
+      var slotText = "any time that works";
+      if (selSlot.value) {
+        var pick = selSlot.value.split("|");
+        slotText = DAYS_LONG[+pick[0]] + " " + clock12(pick[1]).text;
+        var row = (HF.schedule[pick[0]] || []).filter(function (x) { return x[0] === pick[1]; })[0];
+        if (selClass.value === "any" && row) cls = HF.classes[row[1]].name; // "Not sure yet" + a time → that time's class
+      }
+      var parts = ["Free class request", "Class: " + cls, "When: " + slotText];
+      if (byId("f-note").value.trim()) parts.push("Notes: " + byId("f-note").value.trim());
+      form.elements.message.value = parts.join(" | ");
+      form.elements.APIKey.value = HF.signup.apiKey;
+      form.elements.emailok.value = "1";
+      form.action = HF.signup.action;
+      form.target = "cr-target";
+
+      submitBtn.disabled = true;
+      submitBtn.setAttribute("aria-busy", "true");
+      status.classList.remove("is-error");
+      status.textContent = "Sending\u2026";
+
+      var settled = false;
+      var timer = setTimeout(function () { if (!settled) { settled = true; showFailed(); } }, 20000);
+      target.addEventListener("load", function onLoad() {
+        target.removeEventListener("load", onLoad);
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        status.textContent = "";
+        showDone(selSlot.value ? cls + " on " + slotText : "a time for your free class");
+      });
+      form.submit();
+    });
   }
 
   /* ---------- Map embed ---------- */
