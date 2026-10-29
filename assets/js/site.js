@@ -357,8 +357,9 @@
 
   /* ---------- Visit page: free class form → ClubReady ----------
      Our own form, sent to ClubReady's web lead form endpoint with the same field names.
-     It posts into a hidden frame, so the visitor stays here and sees our thank-you.
-     ClubReady's reply is on another site, so we can't read it: a finished load = sent. */
+     It is sent as a background request, not a page load: ClubReady's reply redirects to an
+     old corporate thank-you page, and a background request can't move the visitor's page.
+     The reply is on another site, so we can't read it: a reply of any kind = sent. */
   var form = document.querySelector("[data-trial-form]");
   if (form) {
     var q = new URLSearchParams(location.search);
@@ -367,7 +368,6 @@
     var note = form.querySelector("[data-note]");
     var status = form.querySelector("[data-form-status]");
     var submitBtn = form.querySelector("[data-submit]");
-    var target = document.querySelector('iframe[name="cr-target"]');
     var smsRequired = HF.signup.smsOptInRequired;
 
     selClass.innerHTML = '<option value="">Pick a class</option>' + Object.keys(HF.classes).map(function (k) {
@@ -444,25 +444,25 @@
       form.elements.message.value = parts.join(" | ");
       form.elements.APIKey.value = HF.signup.apiKey;
       form.elements.emailok.value = "1";
-      form.action = HF.signup.action;
-      form.target = "cr-target";
-
       submitBtn.disabled = true;
       submitBtn.setAttribute("aria-busy", "true");
       status.classList.remove("is-error");
       status.textContent = "Sending\u2026";
 
-      var settled = false;
-      var timer = setTimeout(function () { if (!settled) { settled = true; showFailed(); } }, 20000);
-      target.addEventListener("load", function onLoad() {
-        target.removeEventListener("load", onLoad);
-        if (settled) return;
-        settled = true;
+      var params = new URLSearchParams(new FormData(form)).toString();
+      var ctrl = "AbortController" in window ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 20000);
+      fetch(HF.signup.action + "?" + params, {
+        method: "GET", mode: "no-cors", credentials: "omit", cache: "no-store",
+        referrerPolicy: "origin", signal: ctrl ? ctrl.signal : undefined
+      }).then(function () {
         clearTimeout(timer);
         status.textContent = "";
         showDone(selSlot.value ? cls + " on " + slotText : "a time for your free class");
+      }, function () {
+        clearTimeout(timer);
+        showFailed();
       });
-      form.submit();
     });
   }
 
@@ -475,7 +475,7 @@
   });
 
   /* ---------- Phone booking bar: appears after the first screen, hides near the footer ---------- */
-  if (page !== "visit" && "IntersectionObserver" in window) {
+  if (page !== "visit" && page !== "thanks" && "IntersectionObserver" in window) {
     var bar = document.createElement("div");
     bar.className = "mobile-cta";
     bar.innerHTML = '<a class="btn" href="visit.html#trial">Book a free class ' + icon.arrow + '</a>' +
