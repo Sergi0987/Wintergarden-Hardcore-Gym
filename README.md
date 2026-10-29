@@ -35,8 +35,14 @@ Then open http://localhost:4321.
 Pages show dashed **Draft** notes where real info is still needed.
 Add `?clean=1` to any URL to hide them (for showing the owner). `?clean=0` brings them back.
 
-The site has a dark and a light palette (sun/moon button in the header).
-Add `?theme=light` or `?theme=dark` to open a page in one of them.
+The site uses the light palette only (owner's choice). Photo bands, the clock and the
+footer stay dark on purpose.
+
+## Free class form
+
+The Visit page embeds the gym's ClubReady lead form (iframe in `site/visit.html`).
+Sign-ups go straight into ClubReady. The form can't be pre-filled from our site, so when a
+visitor clicks a class time, the page shows their pick and asks them to add it to the message box.
 
 ## Still needed from the gym (replace before launch)
 
@@ -50,7 +56,7 @@ Add `?theme=light` or `?theme=dark` to open a page in one of them.
 - [ ] Contract / cancellation terms (FAQ answer)
 - [ ] Real upcoming events
 - [ ] Gym hours, email and social media links
-- [ ] Connect the free class form to email, CRM or the booking system (it does not send anywhere yet)
+- [x] Free class form connected (ClubReady)
 
 ## Deploy
 

@@ -21,27 +21,11 @@
     if (clean === "1") document.documentElement.classList.add("clean");
   })();
 
-  /* ---------- Palette: dark (default) or light. ?theme=light|dark, remembered per visitor ---------- */
-  function setTheme(t) {
-    document.documentElement.setAttribute("data-theme", t);
-    try { localStorage.setItem("hf-theme", t); } catch (e) {}
-    document.querySelectorAll(".theme-btn").forEach(function (b) {
-      b.setAttribute("aria-label", t === "light" ? "Switch to dark colors" : "Switch to light colors");
-      b.setAttribute("aria-pressed", String(t === "light"));
-    });
-  }
-  (function () {
-    var q = new URLSearchParams(location.search).get("theme");
-    if (q === "light" || q === "dark") setTheme(q);
-  })();
-
   /* ---------- Icons ---------- */
   var icon = {
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M3 12h17M13 5l7 7-7 7"/></svg>',
     menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>',
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>',
-    sun: '<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>',
-    moon: '<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>',
     phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>'
   };
@@ -77,7 +61,6 @@
       '<a class="brand" href="index.html" aria-label="Hardcore Fitness Winter Garden, home"><img class="logo-dark" src="assets/img/logo-panel.png" alt="" width="200" height="90"><img class="logo-light" src="assets/img/logo-panel-black.png" alt="" width="200" height="90"><span>Winter<br>Garden</span></a>' +
       '<nav class="nav" aria-label="Main"><ul>' + navItems("") + "</ul></nav>" +
       '<a class="btn btn--small header-cta" href="visit.html#trial">Free class</a>' +
-      '<button class="icon-btn theme-btn" type="button" aria-pressed="false" aria-label="Switch to light colors">' + icon.moon + icon.sun + "</button>" +
       '<button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">' + icon.menu + "</button>" +
       "</div></header>" +
       '<div class="mobile-nav" id="mobile-nav" aria-label="Menu"><ul>' + navItems("big") + "</ul>" +
@@ -95,11 +78,6 @@
     };
     btn.addEventListener("click", function () { setMenu(btn.getAttribute("aria-expanded") !== "true"); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && mnav.classList.contains("is-open")) { setMenu(false); btn.focus(); } });
-
-    document.querySelector(".theme-btn").addEventListener("click", function () {
-      setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
-    });
-    setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
   }
 
   var footerSlot = document.querySelector("[data-footer]");
@@ -377,64 +355,27 @@
     }).join("");
   }
 
-  /* ---------- Visit page: free class form ---------- */
-  var form = document.querySelector("[data-trial-form]");
-  if (form) {
+  /* ---------- Visit page: show the class or event the visitor picked ----------
+     The ClubReady form is hosted by ClubReady, so we can't fill it in for them.
+     Instead we show their pick and ask them to add it to the message box. */
+  var picked = document.querySelector("[data-picked]");
+  if (picked) {
     var q = new URLSearchParams(location.search);
-    var selClass = form.elements["class"];
-    var selTime = form.elements["slot"];
-    var msg = form.elements["message"];
-
-    selClass.innerHTML = '<option value="">Pick a class</option>' + Object.keys(HF.classes).map(function (k) {
-      return '<option value="' + k + '">' + HF.classes[k].name + "</option>";
-    }).join("") + '<option value="any">Not sure yet</option>';
-
-    var fillTimes = function (keep) {
-      var k = selClass.value;
-      var list = upcoming(40, k && k !== "any" ? k : null).slice(0, 14);
-      selTime.innerHTML = '<option value="">Pick a time</option>' + list.map(function (u) {
-        var v = u.day + "|" + u.slot[0];
-        var t = clock12(u.slot[0]);
-        return '<option value="' + v + '"' + (keep === v ? " selected" : "") + ">" + dayWord(u.offset, u.day) + " " + t.text + " · " + HF.classes[u.slot[1]].name + "</option>";
-      }).join("");
-    };
-
-    if (q.get("class") && HF.classes[q.get("class")]) selClass.value = q.get("class");
-    fillTimes(q.get("day") && q.get("time") ? q.get("day") + "|" + q.get("time") : "");
-    if (q.get("event")) msg.value = "I'd like to come to: " + q.get("event");
-    if (q.get("plan")) msg.value = "I have a question about the " + q.get("plan") + " membership.";
-    selClass.addEventListener("change", function () { fillTimes(""); });
-
-    var rules = {
-      name: function (v) { return v.trim().length > 1 || "Add your name so the coach knows who to look for."; },
-      phone: function (v) { return v.replace(/\D/g, "").length >= 10 || "Add a 10-digit phone number so we can confirm your spot."; },
-      email: function (v) { return !v.trim() ? "Add your email so we can send the details." : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || "That email looks off. Check for a missing @ or dot."; },
-      "class": function (v) { return !!v || "Pick a class, or choose “Not sure yet”."; }
-    };
-    var check = function (name) {
-      var el = form.elements[name], field = el.closest(".field"), res = rules[name](el.value);
-      field.classList.toggle("has-error", res !== true);
-      field.querySelector(".err").textContent = res === true ? "" : res;
-      el.setAttribute("aria-invalid", String(res !== true));
-      return res === true;
-    };
-    Object.keys(rules).forEach(function (n) {
-      form.elements[n].addEventListener("blur", function () { if (form.elements[n].value) check(n); });
-    });
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var bad = Object.keys(rules).filter(function (n) { return !check(n); });
-      if (bad.length) { form.elements[bad[0]].focus(); return; }
-      // DRAFT: no backend yet. Connect this to the gym's CRM or a form service before launch.
-      var done = document.querySelector("[data-form-done]");
-      var slot = selTime.value ? selTime.options[selTime.selectedIndex].text : "a time that works for you";
-      done.querySelector("[data-done-text]").textContent =
-        "Thanks, " + form.elements.name.value.trim().split(" ")[0] + ". We'll call or text " + form.elements.phone.value.trim() + " to confirm " + slot + ". Get here 10 minutes early and bring water.";
-      form.classList.add("is-sent");
-      done.setAttribute("tabindex", "-1");
-      done.focus();
-    });
+    var what = "";
+    var cls = HF.classes[q.get("class")];
+    if (cls && q.get("day") && /^\d\d:\d\d$/.test(q.get("time") || "")) {
+      what = cls.name + ", " + DAYS_LONG[+q.get("day")] + " at " + clock12(q.get("time")).text;
+    } else if (cls) {
+      what = cls.name;
+    } else if (q.get("event")) {
+      what = q.get("event");
+    } else if (q.get("plan")) {
+      what = "the " + q.get("plan") + " membership";
+    }
+    if (what) {
+      picked.innerHTML = "<strong>You picked " + esc(what) + ".</strong> Add it to the message box so we can save your spot.";
+      picked.hidden = false;
+    }
   }
 
   /* ---------- Map embed ---------- */
