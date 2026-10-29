@@ -3,17 +3,13 @@
 The look: the gym floor at 5 a.m. Black rubber floor, red painted-wall signage with the
 logo's torn stamp edge, white chalk text, and red LED interval-timer digits.
 
-## Palettes
+## Palette
 
-Two palettes share one token set in `site/assets/css/site.css`:
-
-- **Dark** (default) — the gym floor.
-- **Light** — `html[data-theme="light"]`. Paper ground, ink text, the black stamp logo
-  (same colorway as the owner's third logo file) in the header.
-
-Photo bands (hero, page headers), the floor clock, the class-length badge and the footer
-stay dark in both. Visitors switch with the sun/moon button; the choice is remembered.
-`?theme=light` or `?theme=dark` on any URL forces one (useful for showing the owner).
+The site ships in the **light** palette only (owner's choice): every page sets
+`<html data-theme="light">`, and there is no switch. The dark token set is still the CSS
+base, because the photo bands (hero, page headers), the floor clock, the class-length badge
+and the footer stay dark on purpose. The header uses the black stamp logo (same colorway as
+the owner's third logo file).
 
 ## Color tokens
 
