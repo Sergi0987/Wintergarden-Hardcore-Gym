@@ -26,7 +26,7 @@
       <div class="wrap trial">
         <div class="trial-intro">
           <h2 id="trial-h">Claim your free class.</h2>
-          <p class="lede" style="margin-top:20px">Fill this out and a coach will call or text you to set up your first class.</p>
+          <p class="lede" style="margin-top:20px">Pick a class and a time. A coach will call or text you to confirm.</p>
         </div>
         <ul class="info-list trial-info">
           <li><span class="label">Call or text</span><a href="tel:+14079937000">407-993-7000</a></li>
@@ -35,11 +35,78 @@
         </ul>
 
         <div class="trial-form">
-          <p class="picked" data-picked hidden></p>
-          <div class="form-frame">
-            <!-- ClubReady lead form: sign-ups go straight into the gym's ClubReady account -->
-            <iframe src="https://app.clubready.com/admin/api/apiblank.asp?apiKey=892664D05AC557790F6E8932CE011EF6C15B69ED55025471" title="Free class sign-up form" loading="lazy"></iframe>
+          <form class="form-grid" data-trial-form action="https://app.clubready.com/admin/api/apiformsub.asp" method="get" novalidate>
+            <div class="field">
+              <label class="label" for="f-first">First name</label>
+              <input id="f-first" name="firstname" type="text" autocomplete="given-name" required aria-describedby="e-first">
+              <span class="err" id="e-first"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-last">Last name</label>
+              <input id="f-last" name="lastname" type="text" autocomplete="family-name" required aria-describedby="e-last">
+              <span class="err" id="e-last"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-email">Email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email">
+              <span class="err" id="e-email"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-phone">Phone</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="e-phone">
+              <span class="err" id="e-phone"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-class">Class</label>
+              <select id="f-class" data-class required aria-describedby="e-class"></select>
+              <span class="err" id="e-class"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-slot">When <span class="opt">(optional)</span></label>
+              <select id="f-slot" data-slot></select>
+            </div>
+            <div class="field">
+              <label class="label" for="f-gender">Gender</label>
+              <select id="f-gender" name="gender" required aria-describedby="e-gender">
+                <option value="">Select</option>
+                <option value="F">Female</option>
+                <option value="M">Male</option>
+                <option value="O">Other</option>
+                <option value="U">Prefer not to say</option>
+              </select>
+              <span class="err" id="e-gender"></span>
+            </div>
+            <div class="field">
+              <label class="label" for="f-zip">ZIP code <span class="opt">(optional)</span></label>
+              <input id="f-zip" name="zip" type="text" autocomplete="postal-code" inputmode="numeric" maxlength="10">
+            </div>
+            <div class="field full">
+              <label class="label" for="f-note">Anything the coach should know? <span class="opt">(optional)</span></label>
+              <textarea id="f-note" data-note placeholder="Injuries, goals or questions"></textarea>
+            </div>
+            <div class="field full">
+              <label class="label" for="f-coupon">Coupon code <span class="opt">(optional)</span></label>
+              <input id="f-coupon" name="coupon" type="text" autocomplete="off">
+            </div>
+            <div class="field full">
+              <label class="check" for="f-sms"><input id="f-sms" name="promotionalsmsoptin" type="checkbox" aria-describedby="e-sms"> <span>Text me about my free class and gym offers.</span></label>
+              <span class="err" id="e-sms"></span>
+            </div>
+            <input type="hidden" name="message">
+            <input type="hidden" name="APIKey">
+            <input type="hidden" name="emailok" value="0">
+            <div class="full form-actions">
+              <button class="btn" type="submit" data-submit>Claim my free class
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M3 12h17M13 5l7 7-7 7"/></svg></button>
+              <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+            </div>
+          </form>
+          <div class="form-done" data-form-done tabindex="-1">
+            <h3>You're on the list.</h3>
+            <p data-done-text></p>
+            <a class="btn btn--ghost btn--small" href="classes.html">Read about the classes</a>
           </div>
+          <iframe class="sr-only" name="cr-target" title="Sign-up sending frame" tabindex="-1" aria-hidden="true"></iframe>
           <p class="form-note">Rather talk to someone? Call or text <a href="tel:+14079937000">407-993-7000</a>.</p>
         </div>
       </div>
