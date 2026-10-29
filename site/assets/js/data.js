@@ -17,6 +17,15 @@ window.HF = {
     classMinutes: 60
   },
 
+  // Free class sign-ups go to the gym's ClubReady account through ClubReady's web lead form.
+  // The key is the same public key used in ClubReady's own embed code.
+  // smsOptInRequired mirrors ClubReady's form rule; set false if the owner makes it optional there.
+  signup: {
+    action: "https://app.clubready.com/admin/api/apiformsub.asp",
+    apiKey: "892664D05AC557790F6E8932CE011EF6C15B69ED55025471",
+    smsOptInRequired: true
+  },
+
   classes: {
     lift: {
       name: "Lift",
