@@ -429,6 +429,7 @@
       e.preventDefault();
       var bad = rules.filter(function (r) { return !check(r); });
       if (bad.length) { byId(bad[0][0]).focus(); return; }
+      if (!HF.signup.apiKey) { showFailed(); return; } // key file missing: never show a false "thanks"
 
       // ClubReady has no class or time fields, so the pick travels in the message.
       var cls = selClass.value === "any" ? "Not sure yet" : HF.classes[selClass.value].name;

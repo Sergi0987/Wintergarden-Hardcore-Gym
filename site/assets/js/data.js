@@ -18,11 +18,12 @@ window.HF = {
   },
 
   // Free class sign-ups go to the gym's ClubReady account through ClubReady's web lead form.
-  // The key is the same public key used in ClubReady's own embed code.
+  // The ClubReady key is NOT stored here: it comes from assets/js/config.local.js, which is
+  // git-ignored. Without that file the form shows the "please call us" message instead.
   // smsOptInRequired mirrors ClubReady's form rule; set false if the owner makes it optional there.
   signup: {
     action: "https://app.clubready.com/admin/api/apiformsub.asp",
-    apiKey: "REMOVED_CLUBREADY_KEY",
+    apiKey: (window.HF_SECRETS && window.HF_SECRETS.clubreadyKey) || "",
     smsOptInRequired: true
   },
 

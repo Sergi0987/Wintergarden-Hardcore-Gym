@@ -3,3 +3,4 @@ node_modules/
 .impeccable/
 site/_impeccable-detect.js
 site/_test-*
+site/assets/js/config.local.js
