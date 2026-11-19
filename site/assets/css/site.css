@@ -144,7 +144,7 @@ h1, h2, h3, h4 {
 h1 { font-size: clamp(3.2rem, 8.5vw, 6rem); }
 h2 { font-size: clamp(2.5rem, 5.6vw, 4.5rem); }
 h3 { font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 0.95; }
-p { margin: 0 0 1em; max-width: 65ch; }
+p { margin: 0 0 1em; max-width: 65ch; text-wrap: pretty; }
 .lede { font-size: clamp(1.1rem, 1.5vw, 1.25rem); line-height: 1.5; color: var(--text-2); max-width: 46ch; }
 .muted { color: var(--text-3); }
 .stencil { font-family: var(--stencil); font-weight: 900; }
@@ -530,7 +530,7 @@ p { margin: 0 0 1em; max-width: 65ch; }
 .info-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .info-list li { padding: 18px 0; border-bottom: 1px solid var(--line); display: grid; gap: 4px; color: var(--text-2); }
 .info-list .label { color: var(--red-text); }
-.info-list a { font-size: 1.25rem; font-weight: 600; text-decoration: none; color: var(--text); }
+.info-list a { font-size: 1.25rem; font-weight: 600; text-decoration: none; color: var(--text); font-variant-numeric: tabular-nums; }
 .info-list a:hover { text-decoration: underline; }
 .info-list .inline-link { font-size: inherit; font-weight: inherit; text-decoration: underline; }
 
@@ -647,7 +647,7 @@ p { margin: 0 0 1em; max-width: 65ch; }
 .event .date { display: flex; gap: 14px; align-items: flex-end; }
 .event .date .mon { font-family: var(--display); font-weight: 900; font-size: 1.6rem; text-transform: uppercase; color: var(--red-text); line-height: 1; }
 .event .date .led { font-size: 52px; }
-.event .dow { color: var(--text-3); display: block; margin-top: 10px; }
+.event .dow { color: var(--text-3); display: block; margin-top: 10px; font-variant-numeric: tabular-nums; }
 .event h3 { font-size: clamp(1.9rem, 3.5vw, 2.6rem); margin-bottom: 12px; }
 .event p { color: var(--text-2); margin-bottom: 0; }
 .event .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
@@ -664,7 +664,7 @@ p { margin: 0 0 1em; max-width: 65ch; }
 .plans { border-top: 2px solid var(--text); }
 .plan { display: grid; gap: 12px 40px; padding: 30px 0; border-bottom: 1px solid var(--line); }
 .plan h3 { font-size: clamp(2rem, 4vw, 3rem); }
-.plan .price { font-family: var(--display); font-weight: 900; font-size: 2.6rem; line-height: 1; }
+.plan .price { font-family: var(--display); font-weight: 900; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
 .plan .price small { font-family: var(--body); font-stretch: 75%; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-3); text-transform: uppercase; display: block; margin-top: 6px; }
 .plan p { margin: 0; color: var(--text-2); }
 .plan .btn { justify-self: start; }
@@ -759,10 +759,13 @@ html.clean .draft, html.clean .bio-pending { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .will-reveal [data-reveal] { opacity: 1; transform: none; transition: none; }
   .mosaic img, .class-row .peek, .class-row .peek img, .btn svg, .mobile-cta, body { transition: none; }
+  form.is-sent + .form-done { animation: none; }
+  .done-mark svg { animation: none; stroke-dashoffset: 0; }
+  .spinner { animation-duration: 2s; }
 }
 .map--tall { min-height: 440px; }
 .split--center { align-items: center; }
-.bio-pending { color: var(--text-3); font-style: italic; }
+.bio-pending { color: var(--text-3); }
 
 /* ---------- Free class form (sends to ClubReady) ---------- */
 .form-grid { display: grid; gap: 18px; }
@@ -771,6 +774,7 @@ html.clean .draft, html.clean .bio-pending { display: none; }
 .field label { color: var(--text-2); }
 .field .opt { font-weight: 600; letter-spacing: 0.04em; text-transform: none; color: var(--text-3); }
 .field input, .field select, .field textarea {
+  font-variant-numeric: tabular-nums;
   width: 100%; min-height: 52px; padding: 12px 14px;
   background: var(--field-bg); color: var(--text); border: 1px solid var(--line-2); border-radius: 0;
   font: inherit; font-size: 1rem;
@@ -794,6 +798,13 @@ html.clean .draft, html.clean .bio-pending { display: none; }
 .form-status:empty { display: none; }
 .form-status.is-error { color: var(--red-text); font-weight: 600; }
 .form-done { display: none; border: 2px solid var(--red); padding: 28px; background: var(--bg-2); }
+form.is-sent + .form-done { animation: done-in 0.5s var(--ease-out) both; }
+.done-mark { display: inline-grid; place-items: center; width: 48px; height: 48px; margin-bottom: 16px; background: var(--red); color: var(--white); }
+.done-mark svg { width: 28px; height: 28px; stroke-dasharray: 26; stroke-dashoffset: 26; animation: draw-check 0.45s 0.25s var(--ease-out) forwards; }
+@keyframes done-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes draw-check { to { stroke-dashoffset: 0; } }
+.spinner { width: 16px; height: 16px; border: 2.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .form-done h3 { margin-bottom: 12px; }
 .form-done p { color: var(--text-2); }
 .form-done:focus { outline: none; }
@@ -801,3 +812,17 @@ form.is-sent { display: none; }
 form.is-sent + .form-done { display: block; }
 .form-note { margin: 16px 0 0; color: var(--text-3); }
 .form-note a { color: var(--text); font-weight: 600; white-space: nowrap; }
+
+/* ---------- Legal pages (privacy, terms) ---------- */
+.prose { max-width: 72ch; }
+.prose h2 { font-size: clamp(1.6rem, 2.6vw, 2rem); margin: 2.1em 0 0.5em; }
+.prose p, .prose li { color: var(--text-2); }
+.prose ul { margin: 0 0 1em; padding-left: 1.2em; }
+.prose li { margin-bottom: 0.35em; }
+.prose a { color: var(--text); text-decoration: underline; }
+.prose .meta-line { color: var(--text-3); font-size: 0.95rem; }
+.prose .meta-line + h2 { margin-top: 1.2em; }
+mark.fill { background: #fff3b0; color: var(--ink); padding: 0 4px; outline: 1px dashed #b38f00; }
+.form-legal { margin: 0; font-size: 0.9rem; color: var(--text-3); }
+.form-legal a { color: var(--text-2); }
+.footer-base nav { display: flex; gap: 20px; }
