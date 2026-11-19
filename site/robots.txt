@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sergi0987.github.io/Wintergarden-Hardcore-Gym/sitemap.xml

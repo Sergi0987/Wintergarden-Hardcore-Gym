@@ -90,7 +90,11 @@ function headTags(file, html) {
   const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || HF.gym.name;
   const desc = (html.match(/<meta name="description" content="([^"]*)">/) || [])[1] || "";
   const url = SITE + (file === "index.html" ? "" : file);
-  let tags = (noindex ? "" : `\n  <link rel="canonical" href="${url}">`) +
+  let tags = `\n  <link rel="icon" href="favicon.ico" sizes="32x32">` +
+    `\n  <link rel="icon" href="assets/img/icons/icon-192.png" type="image/png" sizes="192x192">` +
+    `\n  <link rel="apple-touch-icon" href="assets/img/icons/apple-touch-icon.png">` +
+    `\n  <link rel="manifest" href="site.webmanifest">` +
+    (noindex ? "" : `\n  <link rel="canonical" href="${url}">`) +
     `\n  <meta property="og:type" content="website">` +
     `\n  <meta property="og:site_name" content="${attr(HF.gym.name)}">` +
     `\n  <meta property="og:title" content="${attr(title)}">` +
@@ -118,6 +122,12 @@ for (const file of readdirSync(site).filter((f) => f.endsWith(".html"))) {
   let html = addMarkers(readFileSync(path, "utf8"));
   if (!html.includes("<!-- bake:head -->")) html = html.replace("</head>", "  <!-- bake:head --><!-- /bake:head -->\n</head>");
   html = fill(html, "head", headTags(file, html));
+  // The 404 page is served at any broken address, so its relative links need a fixed base.
+  // It has to come before the first stylesheet or font link, so it sits right after <meta charset>.
+  if (file === "404.html") {
+    if (!html.includes("<!-- bake:base -->")) html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n  <!-- bake:base --><!-- /bake:base -->');
+    html = fill(html, "base", `<base href="${SITE}">`);
+  }
   const page = (html.match(/<body data-page="([^"]*)"/) || [])[1] || "";
   html = fill(html, "header", B.header(page));
   html = fill(html, "footer", B.footer(year));
@@ -133,4 +143,12 @@ for (const file of readdirSync(site).filter((f) => f.endsWith(".html"))) {
   writeFileSync(path, html);
   count++;
 }
-console.log(`Baked ${count} pages (events from ${ymd}).`);
+// ---------- Site map + robots: every page that isn't marked noindex ----------
+const listed = readdirSync(site).filter((f) => f.endsWith(".html") && !/<meta name="robots" content="noindex">/.test(readFileSync(join(site, f), "utf8")))
+  .sort((a, b) => (a === "index.html" ? -1 : b === "index.html" ? 1 : a.localeCompare(b)));
+writeFileSync(join(site, "sitemap.xml"),
+  '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  listed.map((f) => `  <url><loc>${SITE}${f === "index.html" ? "" : f}</loc></url>`).join("\n") + "\n</urlset>\n");
+writeFileSync(join(site, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}sitemap.xml\n`);
+
+console.log(`Baked ${count} pages (events from ${ymd}), site map with ${listed.length} pages.`);
