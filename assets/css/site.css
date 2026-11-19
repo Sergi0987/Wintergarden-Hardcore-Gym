@@ -136,14 +136,14 @@ h1, h2, h3, h4 {
   font-family: var(--display);
   font-weight: 900;
   text-transform: uppercase;
-  line-height: 0.88;
+  line-height: 0.95;
   letter-spacing: -0.005em;
   margin: 0;
   text-wrap: balance;
 }
 h1 { font-size: clamp(3.2rem, 8.5vw, 6rem); }
 h2 { font-size: clamp(2.5rem, 5.6vw, 4.5rem); }
-h3 { font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 0.95; }
+h3 { font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1; }
 p { margin: 0 0 1em; max-width: 65ch; text-wrap: pretty; }
 .lede { font-size: clamp(1.1rem, 1.5vw, 1.25rem); line-height: 1.5; color: var(--text-2); max-width: 46ch; }
 .muted { color: var(--text-3); }
@@ -385,7 +385,7 @@ p { margin: 0 0 1em; max-width: 65ch; text-wrap: pretty; }
 .class-row h3 {
   grid-area: name;
   font-family: var(--stencil); font-weight: 900;
-  font-size: clamp(3rem, 8vw, 5.6rem); line-height: 0.85; color: var(--ink);
+  font-size: clamp(3rem, 8vw, 5.6rem); line-height: 0.92; color: var(--ink);
 }
 .class-row .desc { grid-area: desc; }
 .class-row p { margin: 0; color: var(--white); font-size: 1.05rem; }
@@ -587,7 +587,7 @@ p { margin: 0 0 1em; max-width: 65ch; text-wrap: pretty; }
 .next-times .led { font-size: 22px; }
 
 .features { display: grid; border-top: 2px solid var(--ink); }
-.features > div { padding: 26px 0; border-bottom: 2px solid var(--ink); display: grid; gap: 8px; align-content: start; }
+.features > div { padding: 30px 0 32px; border-bottom: 2px solid var(--ink); display: grid; gap: 10px; align-content: start; }
 .features h3 { font-size: 2rem; }
 .features p { margin: 0; }
 @media (min-width: 900px) { .features { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 56px; } }
@@ -674,7 +674,7 @@ p { margin: 0 0 1em; max-width: 65ch; text-wrap: pretty; }
 .plan--featured .btn { --bg-btn: var(--ink); }
 @media (max-width: 599px) { .plan .btn { width: 100%; } }
 @media (min-width: 900px) {
-  .plan { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 0.8fr) auto; align-items: center; }
+  .plan { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 0.8fr) 17rem; align-items: center; }
   .plan .btn { justify-self: end; }
   .plan--featured { padding-inline: 24px; margin-inline: -24px; }
 }
@@ -826,3 +826,8 @@ mark.fill { background: #fff3b0; color: var(--ink); padding: 0 4px; outline: 1px
 .form-legal { margin: 0; font-size: 0.9rem; color: var(--text-3); }
 .form-legal a { color: var(--text-2); }
 .footer-base nav { display: flex; gap: 20px; }
+
+/* Instagram link (footer + mobile menu) */
+.social-link { display: inline-flex; align-items: center; gap: 8px; }
+.social-link svg { flex: none; }
+.site-footer .social-link { overflow-wrap: anywhere; }
