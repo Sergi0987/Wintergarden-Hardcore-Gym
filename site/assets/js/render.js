@@ -81,8 +81,12 @@
       Object.keys(HF.schedule).forEach(function (d) { HF.schedule[d].forEach(function (s) { if (s[2] === id) set[s[1]] = 1; }); });
       return ["lift", "fight", "booty"].filter(function (k) { return set[k]; });
     }
+    // With a photo, the initials sit underneath it: if the photo can't load, it removes itself
+    // and the initials show instead, so a broken link never shows as a broken image.
     function plate(c, i) {
-      return '<div class="plate' + (i % 2 ? " plate--red" : "") + '" aria-hidden="true"><span class="initials">' + initials(c.name) + '</span><span class="label photo-needed">Photo coming</span></div>';
+      var photo = c.photo ? '<img src="' + esc(c.photo) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove(\'plate--photo\');this.remove()">' : "";
+      return '<div class="plate' + (i % 2 ? " plate--red" : "") + (photo ? " plate--photo" : "") + '" aria-hidden="true"><span class="initials">' + initials(c.name) + "</span>" +
+        '<span class="label photo-needed">Photo coming</span>' + photo + "</div>";
     }
 
     /* ---------- Header + footer ---------- */

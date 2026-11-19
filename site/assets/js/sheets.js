@@ -70,6 +70,17 @@
     if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
     return y + "-" + ("0" + mo).slice(-2) + "-" + ("0" + d).slice(-2);
   }
+  // Coach photo: a Google Drive share link, a direct https image link, or a file name in
+  // assets/img/coaches/ (for photos added to the site itself). Anything else is ignored.
+  function photoUrl(v) {
+    v = String(v || "").trim();
+    if (!v) return "";
+    var id = (v.match(/drive\.google\.com\/file\/d\/([\w-]{10,})/) || v.match(/(?:drive|docs)\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([\w-]{10,})/) || [])[1];
+    if (id) return "https://drive.google.com/thumbnail?id=" + id + "&sz=w800";
+    if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return v;
+    if (/^[\w-]+\.(jpe?g|png|webp)$/i.test(v)) return "assets/img/coaches/" + v;
+    return "";
+  }
   function yes(v) { return /^(true|yes|y|1|x)$/i.test(String(v || "").trim()); }
   function slug(name) { return String(name).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
 
@@ -84,7 +95,7 @@
       var coaches = [];
       tables.coaches.forEach(function (r, i) {
         if (!r.name) return;
-        coaches.push({ id: slug(r.name), name: r.name, role: r.role || "Coach", bio: r.bio || "", owner: yes(r.owner),
+        coaches.push({ id: slug(r.name), name: r.name, role: r.role || "Coach", bio: r.bio || "", owner: yes(r.owner), photo: photoUrl(r.photo),
           show: r["show on site"] === undefined || r["show on site"] === "" ? true : yes(r["show on site"]) });
       });
       if (coaches.length) out.coaches = coaches; else problems.push("Coaches: no usable rows, kept the built-in list");
@@ -151,7 +162,7 @@
     });
   }
 
-  root.HFSheet = { parseCSV: parseCSV, table: table, time24: time24, isoDate: isoDate, slug: slug, build: build, apply: apply, tabUrl: tabUrl, configured: configured, TABS: TABS };
+  root.HFSheet = { parseCSV: parseCSV, table: table, time24: time24, isoDate: isoDate, slug: slug, photoUrl: photoUrl, build: build, apply: apply, tabUrl: tabUrl, configured: configured, TABS: TABS };
 
   /* ---------- In the browser ---------- */
   if (typeof document === "undefined" || !root.HF) return;

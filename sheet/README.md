@@ -31,6 +31,9 @@ broken, the site keeps working with the last good data (or the built-in data in 
 
 - Rows with a misspelled day, a bad time or an unknown class are skipped, not shown broken.
   The browser console lists them (`[sheet] Schedule row 4 skipped …`).
+- Coach photos: paste a Google Drive share link (set to "Anyone with the link") in the Coaches
+  tab's Photo column. A missing or broken link shows the coach's initials instead. A file name
+  like `rob-roche.jpg` uses a photo from `site/assets/img/coaches/` (best quality: optimize it first).
 - A coach named on the Schedule but missing from Coaches still shows by name; add them to the
   Coaches tab to give them a card on the Coaches page.
 - Re-running `npm run bake` after big changes keeps the baked pages (what Google reads first) up

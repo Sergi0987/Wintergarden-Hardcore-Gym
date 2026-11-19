@@ -287,42 +287,48 @@ var SEED = {
       "Owner",
       "",
       true,
-      true
+      true,
+      ""
     ],
     [
       "Rob Roche",
       "Head Trainer",
       "",
       false,
-      true
+      true,
+      ""
     ],
     [
       "Sergio Padilla",
       "Coach",
       "",
       false,
-      true
+      true,
+      ""
     ],
     [
       "Karen West",
       "Coach",
       "",
       false,
-      true
+      true,
+      ""
     ],
     [
       "Jordan Howard",
       "Coach",
       "",
       false,
-      true
+      true,
+      ""
     ],
     [
       "David Alston",
       "Coach",
       "",
       false,
-      true
+      true,
+      ""
     ]
   ],
   "events": [
@@ -413,7 +419,7 @@ function setUpSheet() {
   ss.setSpreadsheetTimeZone("America/New_York");
   ss.setSpreadsheetLocale("en_US");
 
-  var coaches = tab_(ss, "Coaches", ["Name", "Role", "Bio (2-3 lines)", "Owner", "Show on site"], SEED.coaches, [180, 130, 420, 80, 110]);
+  var coaches = tab_(ss, "Coaches", ["Name", "Role", "Bio (2-3 lines)", "Owner", "Show on site", "Photo (Google Drive link)"], SEED.coaches, [180, 130, 420, 80, 110, 300]);
   var schedule = tab_(ss, "Schedule", ["Day", "Time", "Class", "Coach"], SEED.schedule, [120, 100, 140, 180]);
   var events = tab_(ss, "Events", ["Date", "Time", "Title", "Description", "Tags (comma separated)"], SEED.events, [110, 100, 260, 420, 240]);
   var prices = tab_(ss, "Prices", ["Plan", "Price (blank = Ask us)", "Per", "Description", "Button text", "Highlight"], SEED.prices, [170, 170, 150, 420, 200, 100]);
@@ -506,6 +512,7 @@ function howTo_(ss, tabs) {
     ["Change a row and the website updates within a few minutes. Refresh the site to see it."],
     ["Schedule: one row per class. Pick the day, type the time like 5:15 AM, pick the class and coach. Add a row to add a class, delete a row to remove it."],
     ["Coaches: add a coach here first, then they show up in the Schedule coach dropdown. Uncheck 'Show on site' to hide someone without deleting them."],
+    ["Coach photos: upload the photo to Google Drive, click Share > General access > 'Anyone with the link', copy the link, and paste it in the Photo column. No photo, or a broken link, shows the coach's initials instead. For the sharpest, fastest photos, send them to Sergio to add to the site."],
     ["Events: past events disappear from the site on their own. Tags show as small labels, separated by commas."],
     ["Prices: leave Price blank to show 'Ask us'. Check Highlight on the one plan you want to stand out."],
     [""],
@@ -519,6 +526,6 @@ function howTo_(ss, tabs) {
   sh.getRange(1, 1, lines.length, 1).setValues(lines).setWrap(true);
   sh.setColumnWidth(1, 760);
   sh.getRange("A1").setFontSize(16).setFontWeight("bold").setFontColor(RED);
-  sh.getRange("A9:A11").setFontWeight("bold");
-  sh.getRange("A13").setFontWeight("bold");
+  sh.getRange("A10:A12").setFontWeight("bold");
+  sh.getRange("A14").setFontWeight("bold");
 }
