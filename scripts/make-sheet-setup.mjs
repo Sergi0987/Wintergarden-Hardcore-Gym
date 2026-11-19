@@ -88,7 +88,9 @@ function setUpSheet() {
   var blank = ss.getSheetByName("Sheet1");
   if (blank && blank.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(blank);
   ss.setActiveSheet(ss.getSheetByName("How to"));
-  SpreadsheetApp.getUi().alert("Done. Next: File > Share > Publish to web > Entire document > Comma-separated values (.csv) > Publish. Send Sergio the link, plus the tab numbers on the How to tab.");
+  // A corner note, not a pop-up: a pop-up can leave the script waiting forever if the sheet isn't in front.
+  ss.toast("Next: File > Share > Publish to web > Entire document > CSV > Publish.", "Website sheet is ready", 30);
+  Logger.log("Done. Tabs: " + [schedule, coaches, events, prices].map(function (t) { return t.getName() + " " + t.getSheetId(); }).join(", "));
 }
 
 function tab_(ss, name, headers, rows, widths) {
