@@ -127,12 +127,12 @@
 
     /* ---------- Coaches ---------- */
     function coachStrip() {
-      return HF.coaches.filter(function (c) { return !c.owner; }).map(function (c, i) {
+      return HF.coaches.filter(function (c) { return !c.owner && c.show !== false; }).map(function (c, i) {
         return '<a href="coaches.html#' + c.id + '">' + plate(c, i) + "<h3>" + esc(c.name) + '</h3><span class="label meta">' + esc(c.role === "Coach" ? "" : c.role + " · ") + esc(teaches(c.id).map(function (k) { return HF.classes[k].name; }).join(" · ")) + "</span></a>";
       }).join("");
     }
     function coachGrid() {
-      return HF.coaches.map(function (c, i) {
+      return HF.coaches.filter(function (c) { return c.show !== false; }).map(function (c, i) {
         var t = teaches(c.id);
         return '<article class="coach" id="' + c.id + '" data-reveal>' + plate(c, i) +
           "<h3>" + esc(c.name) + '</h3><span class="label role">' + esc(c.role) + "</span>" +

@@ -15,8 +15,26 @@ const site = join(dirname(fileURLToPath(import.meta.url)), "..", "site");
 // Load data.js and render.js the way a browser would.
 const ctx = { window: {}, console };
 vm.createContext(ctx);
-for (const f of ["data.js", "render.js"]) vm.runInContext(readFileSync(join(site, "assets/js", f), "utf8"), ctx, { filename: f });
+for (const f of ["data.js", "sheets.js", "render.js"]) vm.runInContext(readFileSync(join(site, "assets/js", f), "utf8"), ctx, { filename: f });
 const HF = ctx.window.HF;
+
+// If the gym's Google Sheet is connected, bake its latest data in (a tab that fails keeps data.js).
+const S = ctx.window.HFSheet;
+if (S.configured(HF)) {
+  const tables = {};
+  for (const tab of Object.keys(S.TABS)) {
+    try {
+      const res = await fetch(S.tabUrl(HF.sheet, tab), { signal: AbortSignal.timeout(15000) });
+      const text = await res.text();
+      tables[tab] = res.ok && !/^\s*</.test(text) ? S.table(text) : null;
+    } catch { tables[tab] = null; }
+    if (!tables[tab]) console.warn(`Sheet tab "${tab}" didn't load; using data.js for it.`);
+  }
+  const { data, problems } = S.build(HF, tables);
+  problems.forEach((p) => console.warn("Sheet: " + p));
+  S.apply(HF, data);
+  console.log(`Sheet data baked in: ${Object.keys(data).join(", ") || "nothing"}.`);
+}
 const R = ctx.window.HFRender;
 const B = R.make(HF);
 

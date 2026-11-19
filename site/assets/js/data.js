@@ -52,26 +52,36 @@ window.HF = {
     }
   },
 
+  // Live data: once the gym's Google Sheet is published (File > Share > Publish to web > CSV),
+  // paste its link (ending in /pub) as csvBase and each tab's number (on the sheet's "How to" tab).
+  // The Schedule, Coaches, Events and Prices on the site then come from the sheet; everything
+  // below stays as the fallback. Leave csvBase empty to use only this file.
+  sheet: {
+    csvBase: "",
+    tabs: { schedule: null, coaches: null, events: null, prices: null }
+  },
+
+  // id: the coach's full name in lowercase with dashes (the Google Sheet matches coaches the same way).
   // role: shown under the name. Bios are placeholders until each coach writes their own.
   coaches: [
-    { id: "felix", name: "Felix Valentin", role: "Owner", owner: true },
-    { id: "rob", name: "Rob Roche", role: "Head Trainer" },
-    { id: "sergio", name: "Sergio Padilla", role: "Coach" },
-    { id: "karen", name: "Karen West", role: "Coach" },
-    { id: "jordan", name: "Jordan Howard", role: "Coach" },
-    { id: "david", name: "David Alston", role: "Coach" }
+    { id: "felix-valentin", name: "Felix Valentin", role: "Owner", owner: true },
+    { id: "rob-roche", name: "Rob Roche", role: "Head Trainer" },
+    { id: "sergio-padilla", name: "Sergio Padilla", role: "Coach" },
+    { id: "karen-west", name: "Karen West", role: "Coach" },
+    { id: "jordan-howard", name: "Jordan Howard", role: "Coach" },
+    { id: "david-alston", name: "David Alston", role: "Coach" }
   ],
 
   // Day keys: 0 = Sunday ... 6 = Saturday. Each entry: [ "HH:MM" 24h, classKey, coachId ]
   // Class TIMES are real (from the gym). Which class and coach runs each time is still SAMPLE.
   schedule: {
-    1: [["05:15", "lift", "rob"], ["06:45", "fight", "david"], ["08:00", "lift", "karen"], ["09:15", "booty", "karen"], ["12:00", "lift", "rob"], ["16:45", "lift", "sergio"], ["18:00", "fight", "david"], ["19:15", "booty", "jordan"]],
-    2: [["05:15", "lift", "sergio"], ["06:45", "booty", "karen"], ["08:00", "lift", "rob"], ["09:15", "fight", "david"], ["12:00", "lift", "jordan"], ["16:45", "lift", "rob"], ["18:00", "booty", "jordan"], ["19:15", "fight", "sergio"]],
-    3: [["05:15", "lift", "rob"], ["06:45", "fight", "david"], ["08:00", "lift", "karen"], ["09:15", "booty", "karen"], ["12:00", "lift", "rob"], ["16:45", "lift", "sergio"], ["18:00", "fight", "david"], ["19:15", "booty", "jordan"]],
-    4: [["05:15", "lift", "sergio"], ["06:45", "booty", "karen"], ["08:00", "lift", "rob"], ["09:15", "fight", "david"], ["12:00", "lift", "jordan"], ["16:45", "lift", "rob"], ["18:00", "booty", "jordan"], ["19:15", "fight", "sergio"]],
-    5: [["05:15", "lift", "rob"], ["06:45", "fight", "david"], ["08:00", "lift", "karen"], ["09:15", "booty", "karen"], ["12:00", "lift", "jordan"], ["16:45", "lift", "sergio"], ["18:00", "fight", "rob"]],
-    6: [["06:45", "lift", "rob"], ["08:00", "fight", "david"], ["09:15", "booty", "karen"]],
-    0: [["08:00", "lift", "sergio"], ["09:15", "fight", "rob"]]
+    1: [["05:15", "lift", "rob-roche"], ["06:45", "fight", "david-alston"], ["08:00", "lift", "karen-west"], ["09:15", "booty", "karen-west"], ["12:00", "lift", "rob-roche"], ["16:45", "lift", "sergio-padilla"], ["18:00", "fight", "david-alston"], ["19:15", "booty", "jordan-howard"]],
+    2: [["05:15", "lift", "sergio-padilla"], ["06:45", "booty", "karen-west"], ["08:00", "lift", "rob-roche"], ["09:15", "fight", "david-alston"], ["12:00", "lift", "jordan-howard"], ["16:45", "lift", "rob-roche"], ["18:00", "booty", "jordan-howard"], ["19:15", "fight", "sergio-padilla"]],
+    3: [["05:15", "lift", "rob-roche"], ["06:45", "fight", "david-alston"], ["08:00", "lift", "karen-west"], ["09:15", "booty", "karen-west"], ["12:00", "lift", "rob-roche"], ["16:45", "lift", "sergio-padilla"], ["18:00", "fight", "david-alston"], ["19:15", "booty", "jordan-howard"]],
+    4: [["05:15", "lift", "sergio-padilla"], ["06:45", "booty", "karen-west"], ["08:00", "lift", "rob-roche"], ["09:15", "fight", "david-alston"], ["12:00", "lift", "jordan-howard"], ["16:45", "lift", "rob-roche"], ["18:00", "booty", "jordan-howard"], ["19:15", "fight", "sergio-padilla"]],
+    5: [["05:15", "lift", "rob-roche"], ["06:45", "fight", "david-alston"], ["08:00", "lift", "karen-west"], ["09:15", "booty", "karen-west"], ["12:00", "lift", "jordan-howard"], ["16:45", "lift", "sergio-padilla"], ["18:00", "fight", "rob-roche"]],
+    6: [["06:45", "lift", "rob-roche"], ["08:00", "fight", "david-alston"], ["09:15", "booty", "karen-west"]],
+    0: [["08:00", "lift", "sergio-padilla"], ["09:15", "fight", "rob-roche"]]
   },
 
   events: [

@@ -33,6 +33,12 @@ Shared HTML builders live in `site/assets/js/render.js`, used by both the bake a
 
 At launch, set `gym.siteUrl` in `data.js` to the real domain and run `npm run bake`.
 
+## Google Sheet (Option 2)
+
+The Schedule, Coaches, Events and Prices can come from the gym's Google Sheet, so the owner can
+update them without code. Setup steps are in [`sheet/README.md`](sheet/README.md). Until the
+sheet is connected (`sheet.csvBase` in `data.js`), the site uses `data.js` as before.
+
 ## Photos and logos
 
 Originals live in `assets-src/` (not published). To add or replace a photo, put the original
