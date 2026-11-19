@@ -14,7 +14,11 @@ window.HF = {
     tel: "+14079937000",
     mapsQuery: "1401 Beulah Rd Ste 100, Winter Garden, FL 34787",
     timeZone: "America/New_York",
-    classMinutes: 60
+    classMinutes: 60,
+    // Used for search tags, link previews and the site map (scripts/bake.mjs).
+    // Change siteUrl to the gym's own domain at launch, then run: npm run bake
+    siteUrl: "https://sergi0987.github.io/Wintergarden-Hardcore-Gym/",
+    address: { street: "1401 Beulah Rd, Ste 100", city: "Winter Garden", state: "FL", zip: "34787" }
   },
 
   // Free class sign-ups go to the gym's ClubReady account through ClubReady's web lead form.
