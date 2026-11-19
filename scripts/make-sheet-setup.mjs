@@ -144,7 +144,7 @@ function howTo_(ss, tabs) {
   var lines = [
     ["How to update the website"],
     [""],
-    ["Change a row and the website updates within about 5 minutes. Refresh the site to see it."],
+    ["Change a row and the website updates within a few minutes. Refresh the site to see it."],
     ["Schedule: one row per class. Pick the day, type the time like 5:15 AM, pick the class and coach. Add a row to add a class, delete a row to remove it."],
     ["Coaches: add a coach here first, then they show up in the Schedule coach dropdown. Uncheck 'Show on site' to hide someone without deleting them."],
     ["Events: past events disappear from the site on their own. Tags show as small labels, separated by commas."],

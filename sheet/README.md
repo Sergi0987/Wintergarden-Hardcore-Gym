@@ -1,7 +1,7 @@
 # The gym's Google Sheet
 
 The website's **Schedule, Coaches, Events and Prices** can come from a Google Sheet the gym edits.
-Changes show on the site within about 5 minutes. If the sheet can't be reached, or a row is
+Changes show on the site within a few minutes (Google takes a moment to update its published copy). If the sheet can't be reached, or a row is
 broken, the site keeps working with the last good data (or the built-in data in `data.js`).
 
 ## One-time setup (about 5 minutes)
