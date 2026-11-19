@@ -1,0 +1,9 @@
+{
+  "name": "hardcore-fitness-winter-garden",
+  "private": true,
+  "description": "Hardcore Fitness Winter Garden website (static, no dependencies)",
+  "scripts": {
+    "bake": "node scripts/bake.mjs",
+    "serve": "node scripts/serve.mjs"
+  }
+}
