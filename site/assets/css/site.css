@@ -628,7 +628,10 @@ p { margin: 0 0 1em; max-width: 65ch; }
 .sched .who { grid-column: 2; color: var(--text-3); font-size: 0.95rem; }
 .sched .status { color: var(--red-text); margin-left: 6px; }
 .sched .btn { grid-column: 1 / -1; grid-row: 3; width: 100%; margin-top: 6px; }
-.sched li.is-past { opacity: 0.5; }
+.sched li.is-past .cls, .sched li.is-past .who { color: var(--text-3); }
+[data-theme] .sched li.is-past .led .on { fill: var(--text-3); filter: none; }
+[data-theme] .sched li.is-past .led .off { fill: transparent; }
+[data-theme] .sched li.is-past .led-suffix { color: var(--text-3); }
 .sched li.is-next { background: linear-gradient(90deg, rgba(227, 30, 38, 0.12), transparent 70%); }
 .sched-empty { padding: 48px 0; color: var(--text-3); }
 @media (min-width: 760px) {
