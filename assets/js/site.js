@@ -10,6 +10,9 @@
   var esc = R.esc, led = R.led, clock12 = R.clock12, toMins = R.toMins, icon = R.icon;
   var DAYS = R.DAYS, DAYS_LONG = R.DAYS_LONG;
   var page = document.body.dataset.page || "";
+  // Fresh Google Sheet data (sheets.js) calls HF.refresh(), which re-runs each of these.
+  var refreshers = [];
+  HF.refresh = function () { refreshers.forEach(function (fn) { fn(); }); };
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.HF.icon = icon;
   window.HF.led = led;
@@ -116,6 +119,8 @@
       count.innerHTML = led(hms(next.inSecs), "", "Starts in " + Math.floor(next.inSecs / 3600) + " hours " + Math.floor((next.inSecs % 3600) / 60) + " minutes");
     };
 
+    refreshers.push(function () { lastKey = ""; render(); });
+
     if (!reduceMotion) {
       // Power-on test: every segment lights, then the real time settles in.
       time.innerHTML = led(" 8:88", "", "Loading");
@@ -130,22 +135,31 @@
 
   /* ---------- Data lists: baked into the page, refreshed here (later: from the Google Sheet) ---------- */
   var strip = document.querySelector("[data-coach-strip]");
-  if (strip) strip.innerHTML = B.coachStrip();
   var cgrid = document.querySelector("[data-coach-grid]");
-  if (cgrid) cgrid.innerHTML = B.coachGrid();
   var plansEl = document.querySelector("[data-plans]");
-  if (plansEl) plansEl.innerHTML = B.plans();
   var evList = document.querySelector("[data-events]");
-  if (evList) evList.innerHTML = B.events(gymNow().ymd);
+  var renderLists = function () {
+    if (strip) strip.innerHTML = B.coachStrip();
+    if (cgrid) cgrid.innerHTML = B.coachGrid();
+    if (plansEl) plansEl.innerHTML = B.plans();
+    if (evList) evList.innerHTML = B.events(gymNow().ymd);
+    document.querySelectorAll(".will-reveal [data-reveal]").forEach(function (el) { el.classList.add("is-in"); });
+  };
+  renderLists();
+  refreshers.push(renderLists);
 
   /* ---------- Classes page: next times per class ---------- */
-  document.querySelectorAll("[data-next-times]").forEach(function (el) {
-    var key = el.getAttribute("data-next-times");
-    el.innerHTML = upcoming(4, key).map(function (u) {
-      var t = clock12(u.slot[0]);
-      return '<a href="' + B.bookHref(u.day, u.slot) + '"><span class="day">' + (u.offset === 0 ? "Today" : DAYS[u.day]) + " · " + esc(B.firstName(u.slot[2])) + "</span>" + led(t.digits.trim(), t.ampm, dayWord(u.offset, u.day) + " " + t.text, "led--bare") + "</a>";
-    }).join("");
-  });
+  var renderNextTimes = function () {
+    document.querySelectorAll("[data-next-times]").forEach(function (el) {
+      var key = el.getAttribute("data-next-times");
+      el.innerHTML = upcoming(4, key).map(function (u) {
+        var t = clock12(u.slot[0]);
+        return '<a href="' + B.bookHref(u.day, u.slot) + '"><span class="day">' + (u.offset === 0 ? "Today" : DAYS[u.day]) + " · " + esc(B.firstName(u.slot[2])) + "</span>" + led(t.digits.trim(), t.ampm, dayWord(u.offset, u.day) + " " + t.text, "led--bare") + "</a>";
+      }).join("");
+    });
+  };
+  renderNextTimes();
+  refreshers.push(renderNextTimes);
 
   /* ---------- Schedule page ---------- */
   var sched = document.querySelector("[data-schedule]");
@@ -181,6 +195,10 @@
     });
     drawSchedule();
     setInterval(drawSchedule, 30000);
+    refreshers.push(function () {
+      tabs.innerHTML = B.dayTabs(state.day, gymNow().day);
+      drawSchedule();
+    });
   }
 
   /* ---------- Visit page: free class form → ClubReady ----------
@@ -213,6 +231,7 @@
     if (q.get("event")) note.value = "I'd like to come to: " + q.get("event");
     if (q.get("plan")) note.value = "I have a question about the " + q.get("plan") + " membership.";
     selClass.addEventListener("change", function () { fillSlots(""); });
+    refreshers.push(function () { fillSlots(selSlot.value); });
 
     var byId = function (id) { return document.getElementById(id); };
     var rules = [
