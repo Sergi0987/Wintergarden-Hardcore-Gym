@@ -12,6 +12,7 @@
   var WEEK = [1, 2, 3, 4, 5, 6, 0];
 
   var icon = {
+    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M3 12h17M13 5l7 7-7 7"/></svg>',
     menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>',
     close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>',
@@ -114,12 +115,16 @@
         "</div></header>" +
         '<div class="mobile-nav" id="mobile-nav" aria-label="Menu"><ul>' + navItems(page, "big") + "</ul>" +
         '<a class="btn" href="visit.html#trial">Book a free class ' + icon.arrow + "</a>" +
-        '<p class="muted">' + esc(HF.gym.street) + ", " + esc(HF.gym.city) + '<br><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p></div>";
+        '<p class="muted">' + esc(HF.gym.street) + ", " + esc(HF.gym.city) + '<br><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p>" + insta("social-link muted") + "</div>";
+    }
+    function insta(cls) {
+      if (!HF.gym.instagram) return "";
+      return '<p><a class="' + cls + '" href="' + esc(HF.gym.instagram) + '" rel="noopener" target="_blank">' + icon.instagram + "<span>" + esc(HF.gym.instagramHandle || "Instagram") + '</span><span class="sr-only"> on Instagram (opens in a new tab)</span></a></p>';
     }
     function footer(year) {
       return '<footer class="site-footer"><div class="wrap"><div class="footer-grid">' +
         '<div><img src="assets/img/logo-full.webp" alt="Hardcore Fitness Winter Garden" width="220" height="133" loading="lazy"></div>' +
-        "<div><h4>Find us</h4><p>" + esc(HF.gym.street) + "<br>" + esc(HF.gym.city) + '</p><p><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p></div>" +
+        "<div><h4>Find us</h4><p>" + esc(HF.gym.street) + "<br>" + esc(HF.gym.city) + '</p><p><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p>" + insta("social-link") + "</div>" +
         "<div><h4>Train</h4><ul>" +
         '<li><a href="classes.html">Classes</a></li><li><a href="schedule.html">Schedule</a></li><li><a href="membership.html">Membership</a></li><li><a href="visit.html#trial">Free first class</a></li></ul></div>' +
         "<div><h4>The gym</h4><ul>" +

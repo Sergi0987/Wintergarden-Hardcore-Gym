@@ -88,6 +88,7 @@ function gymData() {
     name: HF.gym.name,
     url: SITE,
     telephone: HF.gym.tel,
+    ...(HF.gym.instagram ? { sameAs: [HF.gym.instagram] } : {}),
     image: SITE + "assets/img/share.jpg",
     logo: SITE + "assets/img/logo-mark.png",
     address: { "@type": "PostalAddress", streetAddress: a.street, addressLocality: a.city, addressRegion: a.state, postalCode: a.zip, addressCountry: "US" },

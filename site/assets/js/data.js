@@ -12,6 +12,8 @@ window.HF = {
     city: "Winter Garden, FL 34787",
     phone: "407-993-7000",
     tel: "+14079937000",
+    instagram: "https://www.instagram.com/hardcorefitness_wintergarden/",
+    instagramHandle: "@hardcorefitness_wintergarden",
     mapsQuery: "1401 Beulah Rd Ste 100, Winter Garden, FL 34787",
     timeZone: "America/New_York",
     classMinutes: 60,
