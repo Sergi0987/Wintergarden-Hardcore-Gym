@@ -1,7 +1,7 @@
 # Hardcore Fitness Winter Garden — website (draft v1)
 
 A new multi-page website for Hardcore Fitness Winter Garden, 1401 Beulah Rd Ste 100.
-Plain HTML, CSS and JavaScript. No build step.
+Plain HTML, CSS and JavaScript. No dependencies; two small Node scripts keep pages and images up to date.
 
 Live draft: https://sergi0987.github.io/Wintergarden-Hardcore-Gym/
 
@@ -20,15 +20,42 @@ Live draft: https://sergi0987.github.io/Wintergarden-Hardcore-Gym/
 ## Edit the content
 
 Class times, coaches, events and membership options all live in one file:
-`site/assets/js/data.js`. Change it there and every page updates.
+`site/assets/js/data.js`. After changing it, re-bake the pages:
+
+```bash
+npm run bake
+```
+
+The bake (`scripts/bake.mjs`) writes the menu, footer, coaches, plans, events, schedule,
+search tags, link-preview tags, gym data for Google, `sitemap.xml` and `robots.txt` into the
+pages, between `<!-- bake:… -->` markers. Never edit inside those markers by hand.
+Shared HTML builders live in `site/assets/js/render.js`, used by both the bake and the browser.
+
+At launch, set `gym.siteUrl` in `data.js` to the real domain and run `npm run bake`.
+
+## Photos and logos
+
+Originals live in `assets-src/` (not published). To add or replace a photo, put the original
+JPEG in `assets-src/photos/` and run:
+
+```bash
+sh scripts/optimize-images.sh
+```
+
+It makes 640/1024/1600px WebP versions plus a JPEG backup, and right-sized WebP logos.
+The share image and site icon are rendered from `assets-src/share/*.html`.
 
 ## Run it locally
 
 ```bash
-node scripts/serve.mjs
+npm run serve
 ```
 
-Then open http://localhost:4321.
+Then open http://localhost:4321. `node scripts/screenshot.mjs` takes full-page desktop and phone
+screenshots into `.shots/` (git-ignored).
+
+The free class form needs `site/assets/js/config.local.js` (git-ignored). Copy
+`config.local.example.js` and paste the ClubReady key in it.
 
 ## Presenting the draft
 
