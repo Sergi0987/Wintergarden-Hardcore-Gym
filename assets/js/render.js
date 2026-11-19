@@ -125,7 +125,8 @@
         "<div><h4>The gym</h4><ul>" +
         '<li><a href="coaches.html">Coaches</a></li><li><a href="events.html">Events</a></li><li><a href="visit.html">Visit</a></li></ul></div>' +
         "</div>" +
-        '<div class="footer-base"><span>&copy; ' + year + " Hardcore Fitness Winter Garden. Hardcore Fitness&reg; is a registered trademark.</span><span>Winter Garden, Florida</span></div>" +
+        '<div class="footer-base"><span>&copy; ' + year + " Hardcore Fitness Winter Garden. Hardcore Fitness&reg; is a registered trademark.</span>" +
+        '<nav aria-label="Legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></nav></div>' +
         "</div></footer>";
     }
 

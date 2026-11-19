@@ -263,7 +263,9 @@
       form.classList.add("is-sent");
       done.focus();
     };
+    var btnLabel = submitBtn.innerHTML;
     var showFailed = function () {
+      submitBtn.innerHTML = btnLabel;
       submitBtn.disabled = false;
       submitBtn.removeAttribute("aria-busy");
       status.textContent = "We couldn't confirm that it went through. Please call or text 407-993-7000 and we'll book you in.";
@@ -292,6 +294,7 @@
       form.elements.emailok.value = "1";
       submitBtn.disabled = true;
       submitBtn.setAttribute("aria-busy", "true");
+      submitBtn.innerHTML = '<span class="spinner" aria-hidden="true"></span>Sending\u2026';
       status.classList.remove("is-error");
       status.textContent = "Sending…";
 
