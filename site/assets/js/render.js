@@ -103,7 +103,7 @@
     function header(page) {
       return '<a class="sr-only skip-link" href="#main">Skip to content</a>' +
         '<header class="site-header"><div class="wrap">' +
-        '<a class="brand" href="index.html" aria-label="Hardcore Fitness Winter Garden, home"><img class="logo-dark" src="assets/img/logo-panel.png" alt="" width="200" height="90"><img class="logo-light" src="assets/img/logo-panel-black.png" alt="" width="200" height="90"><span>Winter<br>Garden</span></a>' +
+        '<a class="brand" href="index.html" aria-label="Hardcore Fitness Winter Garden, home"><img class="logo-dark" src="assets/img/logo-panel.webp" alt="" width="200" height="90"><img class="logo-light" src="assets/img/logo-panel-black.webp" alt="" width="200" height="90"><span>Winter<br>Garden</span></a>' +
         '<nav class="nav" aria-label="Main"><ul>' + navItems(page, "") + "</ul></nav>" +
         '<a class="btn btn--small header-cta" href="visit.html#trial">Free class</a>' +
         '<button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">' + icon.menu + "</button>" +
@@ -114,7 +114,7 @@
     }
     function footer(year) {
       return '<footer class="site-footer"><div class="wrap"><div class="footer-grid">' +
-        '<div><img src="assets/img/logo-full.png" alt="Hardcore Fitness Winter Garden" width="220" height="133" loading="lazy"></div>' +
+        '<div><img src="assets/img/logo-full.webp" alt="Hardcore Fitness Winter Garden" width="220" height="133" loading="lazy"></div>' +
         "<div><h4>Find us</h4><p>" + esc(HF.gym.street) + "<br>" + esc(HF.gym.city) + '</p><p><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p></div>" +
         "<div><h4>Train</h4><ul>" +
         '<li><a href="classes.html">Classes</a></li><li><a href="schedule.html">Schedule</a></li><li><a href="membership.html">Membership</a></li><li><a href="visit.html#trial">Free first class</a></li></ul></div>' +

@@ -4,3 +4,4 @@ node_modules/
 site/_impeccable-detect.js
 site/_test-*
 site/assets/js/config.local.js
+.shots/

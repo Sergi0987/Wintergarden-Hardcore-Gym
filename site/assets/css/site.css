@@ -127,6 +127,7 @@ body::before {
 ::-webkit-scrollbar-thumb:hover { background: var(--red); }
 
 img { display: block; max-width: 100%; }
+picture { display: contents; } /* responsive images keep the layout of a plain <img> */
 a { color: inherit; text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
 :focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
 .band--red :focus-visible { outline-color: var(--ink); }
