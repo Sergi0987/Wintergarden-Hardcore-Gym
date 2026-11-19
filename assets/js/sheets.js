@@ -140,7 +140,8 @@
   // Either one published sheet (csvBase + each tab's number), or a separate CSV address per tab (urls).
   function tabUrl(sheet, tab) {
     if (sheet.urls && sheet.urls[tab]) return sheet.urls[tab];
-    return sheet.csvBase + "?gid=" + sheet.tabs[tab] + "&single=true&output=csv";
+    // The minute stamp skips Google's cache of the published copy; Google's servers still take a few minutes to all catch up.
+    return sheet.csvBase + "?gid=" + sheet.tabs[tab] + "&single=true&output=csv&t=" + Math.floor(Date.now() / 60000);
   }
   function configured(HF) {
     var sh = HF.sheet;
