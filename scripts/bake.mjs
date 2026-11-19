@@ -55,6 +55,58 @@ function addMarkers(html) {
   return html;
 }
 
+// ---------- Search and link-preview tags ----------
+const SITE = HF.gym.siteUrl.replace(/\/?$/, "/");
+const decode = (t) => t.replace(/&amp;/g, "&").replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+const attr = (t) => R.esc(decode(t));
+const jsonLd = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, "\\u003c")}</script>`;
+
+function gymData() {
+  const a = HF.gym.address;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ExerciseGym",
+    "@id": SITE + "#gym",
+    name: HF.gym.name,
+    url: SITE,
+    telephone: HF.gym.tel,
+    image: SITE + "assets/img/share.jpg",
+    logo: SITE + "assets/img/logo-mark.png",
+    address: { "@type": "PostalAddress", streetAddress: a.street, addressLocality: a.city, addressRegion: a.state, postalCode: a.zip, addressCountry: "US" },
+    areaServed: ["Winter Garden", "Ocoee", "Windermere", "Horizon West", "Oakland"].map((n) => ({ "@type": "City", name: n + ", FL" }))
+  };
+}
+function faqData(html) {
+  const qa = [...html.matchAll(/<details><summary>([\s\S]*?)<\/summary><p>([\s\S]*?)<\/p><\/details>/g)];
+  if (!qa.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: qa.map((m) => ({ "@type": "Question", name: decode(m[1]), acceptedAnswer: { "@type": "Answer", text: decode(m[2].replace(/<[^>]+>/g, "")) } }))
+  };
+}
+function headTags(file, html) {
+  const noindex = /<meta name="robots" content="noindex">/.test(html);
+  const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || HF.gym.name;
+  const desc = (html.match(/<meta name="description" content="([^"]*)">/) || [])[1] || "";
+  const url = SITE + (file === "index.html" ? "" : file);
+  let tags = (noindex ? "" : `\n  <link rel="canonical" href="${url}">`) +
+    `\n  <meta property="og:type" content="website">` +
+    `\n  <meta property="og:site_name" content="${attr(HF.gym.name)}">` +
+    `\n  <meta property="og:title" content="${attr(title)}">` +
+    `\n  <meta property="og:description" content="${attr(desc)}">` +
+    `\n  <meta property="og:url" content="${url}">` +
+    `\n  <meta property="og:image" content="${SITE}assets/img/share.jpg">` +
+    `\n  <meta property="og:image:width" content="1200">\n  <meta property="og:image:height" content="630">` +
+    `\n  <meta property="og:image:alt" content="Hardcore Fitness Winter Garden: Train hard on Beulah Road. Your first class is free.">` +
+    `\n  <meta property="og:locale" content="en_US">` +
+    `\n  <meta name="twitter:card" content="summary_large_image">`;
+  if (file === "index.html") tags += "\n  " + jsonLd(gymData());
+  const faq = faqData(html);
+  if (faq && !noindex) tags += "\n  " + jsonLd(faq);
+  return tags + "\n  ";
+}
+
 function fill(html, name, content) {
   const re = new RegExp(`(<!-- bake:${name} -->)[\\s\\S]*?(<!-- /bake:${name} -->)`);
   return re.test(html) ? html.replace(re, (_, a, b) => a + content + b) : html;
@@ -64,6 +116,8 @@ let count = 0;
 for (const file of readdirSync(site).filter((f) => f.endsWith(".html"))) {
   const path = join(site, file);
   let html = addMarkers(readFileSync(path, "utf8"));
+  if (!html.includes("<!-- bake:head -->")) html = html.replace("</head>", "  <!-- bake:head --><!-- /bake:head -->\n</head>");
+  html = fill(html, "head", headTags(file, html));
   const page = (html.match(/<body data-page="([^"]*)"/) || [])[1] || "";
   html = fill(html, "header", B.header(page));
   html = fill(html, "footer", B.footer(year));
