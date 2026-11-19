@@ -57,8 +57,8 @@ window.HF = {
   // The Schedule, Coaches, Events and Prices on the site then come from the sheet; everything
   // below stays as the fallback. Leave csvBase empty to use only this file.
   sheet: {
-    csvBase: "",
-    tabs: { schedule: null, coaches: null, events: null, prices: null }
+    csvBase: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVpn8sYXS7To6Tavgy-GVPGJ62Oq0sD2-7-wvVY2dSJ2ogF1IN3j6wa2kbT2DNLmA_-_NgeN48-Mou/pub",
+    tabs: { schedule: 28435466, coaches: 113840633, events: 866282689, prices: 1352159054 }
   },
 
   // id: the coach's full name in lowercase with dashes (the Google Sheet matches coaches the same way).
