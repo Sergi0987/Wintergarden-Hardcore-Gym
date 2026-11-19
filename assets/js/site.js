@@ -1,13 +1,18 @@
-/* Hardcore Fitness Winter Garden — shared page behavior */
+/* Hardcore Fitness Winter Garden — shared page behavior
+   HTML comes from render.js. Pages are pre-built by scripts/bake.mjs; this file adds what
+   has to happen in the browser: the live clock, today's schedule, the form and the menus. */
 (function () {
   "use strict";
 
   var HF = window.HF;
+  var R = window.HFRender;
+  var B = R.make(HF);
+  var esc = R.esc, led = R.led, clock12 = R.clock12, toMins = R.toMins, icon = R.icon;
+  var DAYS = R.DAYS, DAYS_LONG = R.DAYS_LONG;
   var page = document.body.dataset.page || "";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  var DAYS_LONG = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  window.HF.icon = icon;
+  window.HF.led = led;
 
   /* ---------- Draft notes: ?clean=1 hides them for presenting, ?clean=0 shows them ---------- */
   (function () {
@@ -21,54 +26,15 @@
     if (clean === "1") document.documentElement.classList.add("clean");
   })();
 
-  /* ---------- Icons ---------- */
-  var icon = {
-    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M3 12h17M13 5l7 7-7 7"/></svg>',
-    menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>',
-    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>',
-    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>',
-    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>'
-  };
-  window.HF.icon = icon;
+  /* ---------- Header + footer (only filled here if a page wasn't baked) ---------- */
+  var headerSlot = document.querySelector("[data-header]:empty");
+  if (headerSlot) headerSlot.outerHTML = B.header(page);
+  var footerSlot = document.querySelector("[data-footer]:empty");
+  if (footerSlot) footerSlot.outerHTML = B.footer(new Date().getFullYear());
 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-
-  /* ---------- Header + footer ---------- */
-  var NAV = [
-    ["classes", "classes.html", "Classes"],
-    ["schedule", "schedule.html", "Schedule"],
-    ["coaches", "coaches.html", "Coaches"],
-    ["events", "events.html", "Events"],
-    ["membership", "membership.html", "Membership"],
-    ["visit", "visit.html", "Visit"]
-  ];
-  function navItems(cls) {
-    return NAV.map(function (n) {
-      var cur = n[0] === page ? ' aria-current="page"' : "";
-      return '<li><a class="' + cls + '" href="' + n[1] + '"' + cur + ">" + n[2] + (cls === "big" ? icon.arrow.replace('aria-hidden="true"', 'aria-hidden="true" width="28" height="28"') : "") + "</a></li>";
-    }).join("");
-  }
-
-  var headerSlot = document.querySelector("[data-header]");
-  if (headerSlot) {
-    headerSlot.outerHTML =
-      '<a class="sr-only skip-link" href="#main">Skip to content</a>' +
-      '<header class="site-header"><div class="wrap">' +
-      '<a class="brand" href="index.html" aria-label="Hardcore Fitness Winter Garden, home"><img class="logo-dark" src="assets/img/logo-panel.png" alt="" width="200" height="90"><img class="logo-light" src="assets/img/logo-panel-black.png" alt="" width="200" height="90"><span>Winter<br>Garden</span></a>' +
-      '<nav class="nav" aria-label="Main"><ul>' + navItems("") + "</ul></nav>" +
-      '<a class="btn btn--small header-cta" href="visit.html#trial">Free class</a>' +
-      '<button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">' + icon.menu + "</button>" +
-      "</div></header>" +
-      '<div class="mobile-nav" id="mobile-nav" aria-label="Menu"><ul>' + navItems("big") + "</ul>" +
-      '<a class="btn" href="visit.html#trial">Book a free class ' + icon.arrow + "</a>" +
-      '<p class="muted">' + esc(HF.gym.street) + ", " + esc(HF.gym.city) + '<br><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p></div>";
-
-    var btn = document.querySelector(".menu-btn");
-    var mnav = document.getElementById("mobile-nav");
+  var btn = document.querySelector(".menu-btn");
+  var mnav = document.getElementById("mobile-nav");
+  if (btn && mnav) {
     var setMenu = function (open) {
       btn.setAttribute("aria-expanded", String(open));
       btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
@@ -79,61 +45,6 @@
     btn.addEventListener("click", function () { setMenu(btn.getAttribute("aria-expanded") !== "true"); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && mnav.classList.contains("is-open")) { setMenu(false); btn.focus(); } });
   }
-
-  var footerSlot = document.querySelector("[data-footer]");
-  if (footerSlot) {
-    var y = new Date().getFullYear();
-    footerSlot.outerHTML =
-      '<footer class="site-footer"><div class="wrap"><div class="footer-grid">' +
-      '<div><img src="assets/img/logo-full.png" alt="Hardcore Fitness Winter Garden" width="220" height="133"></div>' +
-      "<div><h4>Find us</h4><p>" + esc(HF.gym.street) + "<br>" + esc(HF.gym.city) + '</p><p><a href="tel:' + HF.gym.tel + '">' + HF.gym.phone + "</a></p></div>" +
-      "<div><h4>Train</h4><ul>" +
-      '<li><a href="classes.html">Classes</a></li><li><a href="schedule.html">Schedule</a></li><li><a href="membership.html">Membership</a></li><li><a href="visit.html#trial">Free first class</a></li></ul></div>' +
-      "<div><h4>The gym</h4><ul>" +
-      '<li><a href="coaches.html">Coaches</a></li><li><a href="events.html">Events</a></li><li><a href="visit.html">Visit</a></li></ul></div>' +
-      "</div>" +
-      '<div class="footer-base"><span>&copy; ' + y + " Hardcore Fitness Winter Garden. Hardcore Fitness&reg; is a registered trademark.</span><span>Winter Garden, Florida</span></div>" +
-      "</div></footer>";
-  }
-
-  /* ---------- LED seven-segment digits ---------- */
-  var SEG = { "0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd", "4": "fgbc", "5": "afgcd", "6": "afgedc", "7": "abc", "8": "abcdefg", "9": "abcdfg", "-": "g", " ": "" };
-  var W = 24, H = 40, T = 4.6, G = 0.9;
-  function hseg(cx, cy, L) { var h = T / 2; return [[cx - L / 2, cy], [cx - L / 2 + h, cy - h], [cx + L / 2 - h, cy - h], [cx + L / 2, cy], [cx + L / 2 - h, cy + h], [cx - L / 2 + h, cy + h]]; }
-  function vseg(cx, cy, L) { var h = T / 2; return [[cx, cy - L / 2], [cx + h, cy - L / 2 + h], [cx + h, cy + L / 2 - h], [cx, cy + L / 2], [cx - h, cy + L / 2 - h], [cx - h, cy - L / 2 + h]]; }
-  var HL = W - T - 2 * G, VL = H / 2 - T / 2 - 2 * G;
-  var SEGS = {
-    a: hseg(W / 2, T / 2, HL), g: hseg(W / 2, H / 2, HL), d: hseg(W / 2, H - T / 2, HL),
-    f: vseg(T / 2, H / 4 + T / 4, VL), b: vseg(W - T / 2, H / 4 + T / 4, VL),
-    e: vseg(T / 2, (3 * H) / 4 - T / 4, VL), c: vseg(W - T / 2, (3 * H) / 4 - T / 4, VL)
-  };
-  function poly(pts, dx) { return pts.map(function (p) { return (p[0] + dx).toFixed(2) + "," + p[1].toFixed(2); }).join(" "); }
-
-  // tight: close the empty left half of a "1" (used where unlit segments are hidden)
-  function ledSVG(text, tight) {
-    var x = 0, out = "";
-    String(text).split("").forEach(function (ch) {
-      if (ch === ":") {
-        out += '<rect class="on" x="' + (x + 1.5) + '" y="11" width="4.6" height="4.6"/><rect class="on" x="' + (x + 1.5) + '" y="25" width="4.6" height="4.6"/>';
-        x += 8 + 5;
-        return;
-      }
-      var lit = SEG[ch] !== undefined ? SEG[ch] : "";
-      var shift = tight && ch === "1" ? W - T - 2 : 0;
-      x -= shift;
-      "abcdefg".split("").forEach(function (s) {
-        out += '<polygon class="' + (lit.indexOf(s) > -1 ? "on" : "off") + '" points="' + poly(SEGS[s], x) + '"/>';
-      });
-      x += W + 5;
-    });
-    x -= 5;
-    return '<svg viewBox="-3 -1 ' + (x + 6) + ' 42" aria-hidden="true" focusable="false"><g transform="skewX(-6) translate(4 0)">' + out + "</g></svg>";
-  }
-  function led(text, suffix, label, cls) {
-    return '<span class="led' + (cls ? " " + cls : "") + '">' + ledSVG(text, /led--bare/.test(cls || "")) + (suffix ? '<span class="led-suffix" aria-hidden="true">' + suffix + "</span>" : "") +
-      '<span class="sr-only">' + esc(label || text + (suffix ? " " + suffix : "")) + "</span></span>";
-  }
-  window.HF.led = led;
 
   /* ---------- Time helpers (gym time zone) ---------- */
   function gymNow() {
@@ -149,16 +60,6 @@
       ymd: parts.year + "-" + parts.month + "-" + parts.day
     };
   }
-  function toMins(hhmm) { var p = hhmm.split(":"); return +p[0] * 60 + +p[1]; }
-  function clock12(hhmm) {
-    var m = toMins(hhmm), h = Math.floor(m / 60), mm = m % 60;
-    var h12 = h % 12 || 12;
-    return { digits: (h12 < 10 ? " " : "") + h12 + ":" + (mm < 10 ? "0" : "") + mm, ampm: h < 12 ? "AM" : "PM", text: h12 + ":" + (mm < 10 ? "0" : "") + mm + " " + (h < 12 ? "AM" : "PM") };
-  }
-  function coachName(id) { var c = HF.coaches.filter(function (x) { return x.id === id; })[0]; return c ? c.name : ""; }
-  function firstName(id) { return coachName(id).split(" ")[0]; }
-  function bookHref(day, s) { return "visit.html?class=" + s[1] + "&day=" + day + "&time=" + s[0] + "#trial"; }
-
   // Upcoming classes from now, across the next 7 days.
   function upcoming(limit, filter) {
     var now = gymNow(), list = [];
@@ -207,10 +108,10 @@
         cls.textContent = HF.classes[next.slot[1]].name;
         time.innerHTML = led(t.digits, t.ampm, t.text);
         when.textContent = dayWord(next.offset, next.day);
-        cta.href = bookHref(next.day, next.slot);
+        cta.href = B.bookHref(next.day, next.slot);
         var now = onFloorNow();
-        meta.innerHTML = "Coach " + esc(coachName(next.slot[2])) + ". " +
-          (now ? "On the floor right now: " + esc(HF.classes[now[1]].name) + " with " + esc(firstName(now[2])) + "." : "60 minutes. All levels.");
+        meta.innerHTML = "Coach " + esc(B.coachName(next.slot[2])) + ". " +
+          (now ? "On the floor right now: " + esc(HF.classes[now[1]].name) + " with " + esc(B.firstName(now[2])) + "." : "60 minutes. All levels.");
       }
       count.innerHTML = led(hms(next.inSecs), "", "Starts in " + Math.floor(next.inSecs / 3600) + " hours " + Math.floor((next.inSecs % 3600) / 60) + " minutes");
     };
@@ -227,43 +128,22 @@
     }
   }
 
-  /* ---------- Home: coach strip ---------- */
+  /* ---------- Data lists: baked into the page, refreshed here (later: from the Google Sheet) ---------- */
   var strip = document.querySelector("[data-coach-strip]");
-  if (strip) {
-    strip.innerHTML = HF.coaches.filter(function (c) { return !c.owner; }).map(function (c, i) {
-      return '<a href="coaches.html#' + c.id + '">' + plate(c, i) + "<h3>" + esc(c.name) + '</h3><span class="label meta">' + esc(c.role === "Coach" ? "" : c.role + " · ") + esc(teaches(c.id).map(function (k) { return HF.classes[k].name; }).join(" · ")) + "</span></a>";
-    }).join("");
-  }
-
-  function initials(name) { return name.split(" ").map(function (w) { return w[0]; }).join(""); }
-  function plate(c, i) {
-    return '<div class="plate' + (i % 2 ? " plate--red" : "") + '" aria-hidden="true"><span class="initials">' + initials(c.name) + '</span><span class="label photo-needed">Photo coming</span></div>';
-  }
-  function teaches(id) {
-    var set = {};
-    Object.keys(HF.schedule).forEach(function (d) { HF.schedule[d].forEach(function (s) { if (s[2] === id) set[s[1]] = 1; }); });
-    return ["lift", "fight", "booty"].filter(function (k) { return set[k]; });
-  }
-
-  /* ---------- Coaches page ---------- */
+  if (strip) strip.innerHTML = B.coachStrip();
   var cgrid = document.querySelector("[data-coach-grid]");
-  if (cgrid) {
-    cgrid.innerHTML = HF.coaches.map(function (c, i) {
-      var t = teaches(c.id);
-      return '<article class="coach" id="' + c.id + '" data-reveal>' + plate(c, i) +
-        "<h3>" + esc(c.name) + '</h3><span class="label role">' + esc(c.role) + "</span>" +
-        (t.length ? '<div class="teaches">' + t.map(function (k) { return '<span class="chip">' + HF.classes[k].name + "</span>"; }).join("") + "</div>" : "") +
-        (c.bio ? "<p>" + esc(c.bio) + "</p>" : '<p class="bio-pending">Bio coming soon.</p>') +
-        "</article>";
-    }).join("");
-  }
+  if (cgrid) cgrid.innerHTML = B.coachGrid();
+  var plansEl = document.querySelector("[data-plans]");
+  if (plansEl) plansEl.innerHTML = B.plans();
+  var evList = document.querySelector("[data-events]");
+  if (evList) evList.innerHTML = B.events(gymNow().ymd);
 
   /* ---------- Classes page: next times per class ---------- */
   document.querySelectorAll("[data-next-times]").forEach(function (el) {
     var key = el.getAttribute("data-next-times");
     el.innerHTML = upcoming(4, key).map(function (u) {
       var t = clock12(u.slot[0]);
-      return '<a href="' + bookHref(u.day, u.slot) + '"><span class="day">' + (u.offset === 0 ? "Today" : DAYS[u.day]) + " · " + esc(firstName(u.slot[2])) + "</span>" + led(t.digits.trim(), t.ampm, dayWord(u.offset, u.day) + " " + t.text, "led--bare") + "</a>";
+      return '<a href="' + B.bookHref(u.day, u.slot) + '"><span class="day">' + (u.offset === 0 ? "Today" : DAYS[u.day]) + " · " + esc(B.firstName(u.slot[2])) + "</span>" + led(t.digits.trim(), t.ampm, dayWord(u.offset, u.day) + " " + t.text, "led--bare") + "</a>";
     }).join("");
   });
 
@@ -276,38 +156,12 @@
     // Once today's last class is over, open on the day of the next class instead.
     var firstUp = upcoming(1)[0];
     var state = { day: firstUp ? firstUp.day : today, filter: "all" };
-    var order = [1, 2, 3, 4, 5, 6, 0];
 
-    tabs.innerHTML = order.map(function (d) {
-      return '<button type="button" role="tab" data-day="' + d + '" aria-selected="' + (d === state.day) + '">' + DAYS[d] + "<small>" + (d === today ? "Today" : HF.schedule[d].length + '<span class="w"> classes</span>') + "</small></button>";
-    }).join("");
-    filters.innerHTML = [["all", "All classes"], ["lift", "Lift"], ["fight", "Fight Camp"], ["booty", "Booty Camp"]].map(function (f) {
-      return '<button type="button" data-filter="' + f[0] + '" aria-pressed="' + (f[0] === "all") + '">' + f[1] + "</button>";
-    }).join("");
+    tabs.innerHTML = B.dayTabs(state.day, today);
+    filters.innerHTML = B.filterButtons(state.filter);
 
     var drawSchedule = function () {
-      var now = gymNow();
-      var next = upcoming(1)[0];
-      var rows = (HF.schedule[state.day] || []).filter(function (s) { return state.filter === "all" || s[1] === state.filter; });
-      if (!rows.length) {
-        sched.innerHTML = '<li class="sched-empty">No ' + (state.filter === "all" ? "" : HF.classes[state.filter].name + " ") + "classes on " + DAYS_LONG[state.day] + '. <a href="#" data-clear>Show all classes</a></li>';
-        return;
-      }
-      sched.innerHTML = rows.map(function (s) {
-        var t = clock12(s[0]);
-        var st = toMins(s[0]);
-        var isToday = state.day === now.day;
-        var past = isToday && now.mins >= st + HF.gym.classMinutes;
-        var live = isToday && now.mins >= st && !past;
-        var isNext = next && next.day === state.day && next.offset === 0 && next.slot[0] === s[0] && !live;
-        var status = live ? '<span class="label status">On the floor now</span>' : isNext ? '<span class="label status">Up next</span>' : "";
-        return '<li class="' + (past ? "is-past" : "") + (isNext ? " is-next" : "") + '">' + led(t.digits, t.ampm, t.text) +
-          '<span class="cls">' + HF.classes[s[1]].name + "</span>" +
-          '<span class="who">' + esc(coachName(s[2])) + " " + status + "</span>" +
-          (past ? '<span class="btn btn--small btn--ghost" aria-disabled="true">Done</span>'
-                : '<a class="btn btn--small" href="' + bookHref(state.day, s) + '">Take it free<span class="sr-only"> — ' + HF.classes[s[1]].name + " " + DAYS_LONG[state.day] + " " + t.text + "</span> " + icon.arrow + "</a>") +
-          "</li>";
-      }).join("");
+      sched.innerHTML = B.scheduleRows(state.day, state.filter, gymNow(), upcoming(1)[0]);
     };
 
     tabs.addEventListener("click", function (e) {
@@ -329,32 +183,6 @@
     setInterval(drawSchedule, 30000);
   }
 
-  /* ---------- Events page ---------- */
-  var evList = document.querySelector("[data-events]");
-  if (evList) {
-    var todayYmd = gymNow().ymd;
-    var evs = HF.events.filter(function (e) { return e.date >= todayYmd; });
-    evList.innerHTML = evs.length ? evs.map(function (e) {
-      var d = new Date(e.date + "T12:00:00");
-      var t = clock12(e.time);
-      var dd = (d.getDate() < 10 ? "0" : "") + d.getDate();
-      return '<li class="event" data-reveal><div><div class="date"><span class="mon">' + MONTHS[d.getMonth()] + "</span>" + led(dd, "", MONTHS[d.getMonth()] + " " + d.getDate()) + "</div>" +
-        '<span class="label dow">' + DAYS_LONG[d.getDay()] + " · " + t.text + "</span></div>" +
-        "<div><h3>" + esc(e.title) + "</h3><p>" + esc(e.text) + '</p><div class="meta">' + e.tags.map(function (g) { return '<span class="chip">' + esc(g) + "</span>"; }).join("") + "</div></div>" +
-        '<a class="btn btn--small btn--ghost" href="visit.html?event=' + encodeURIComponent(e.title) + '#trial">I\'m in ' + icon.arrow + "</a></li>";
-    }).join("") : '<li class="sched-empty">No events on the board right now. Check back soon, or ask at the front desk.</li>';
-  }
-
-  /* ---------- Membership page ---------- */
-  var plans = document.querySelector("[data-plans]");
-  if (plans) {
-    plans.innerHTML = HF.plans.map(function (p) {
-      return '<div class="plan' + (p.featured ? " plan--featured" : "") + '" data-reveal><h3>' + esc(p.name) + "</h3><p>" + esc(p.text) + "</p>" +
-        '<div class="price">' + (p.price ? esc(p.price) : "Ask us") + "<small>" + esc(p.per) + "</small></div>" +
-        '<a class="btn btn--small' + (p.featured ? "" : " btn--ghost") + '" href="visit.html' + (p.price === "Free" || p.featured ? "#trial" : "?plan=" + encodeURIComponent(p.name) + "#trial") + '">' + esc(p.cta) + " " + icon.arrow + "</a></div>";
-    }).join("");
-  }
-
   /* ---------- Visit page: free class form → ClubReady ----------
      Our own form, sent to ClubReady's web lead form endpoint with the same field names.
      It is sent as a background request, not a page load: ClubReady's reply redirects to an
@@ -370,9 +198,7 @@
     var submitBtn = form.querySelector("[data-submit]");
     var smsRequired = HF.signup.smsOptInRequired;
 
-    selClass.innerHTML = '<option value="">Pick a class</option>' + Object.keys(HF.classes).map(function (k) {
-      return '<option value="' + k + '">' + HF.classes[k].name + "</option>";
-    }).join("") + '<option value="any">Not sure yet</option>';
+    selClass.innerHTML = B.classOptions();
 
     var fillSlots = function (keep) {
       var k = selClass.value;
@@ -394,8 +220,8 @@
       ["f-last", "e-last", function (v) { return v.trim() ? true : "Add your last name."; }],
       ["f-email", "e-email", function (v) { return !v.trim() ? "Add your email." : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || "That email looks off. Check for a missing @ or dot."; }],
       ["f-phone", "e-phone", function (v) { return v.replace(/\D/g, "").length >= 10 || "Add a 10-digit phone number so we can confirm your spot."; }],
-      ["f-class", "e-class", function (v) { return v ? true : "Pick a class, or choose \u201cNot sure yet\u201d."; }],
-      ["f-gender", "e-gender", function (v) { return v ? true : "Pick an option. \u201cPrefer not to say\u201d is fine."; }],
+      ["f-class", "e-class", function (v) { return v ? true : "Pick a class, or choose “Not sure yet”."; }],
+      ["f-gender", "e-gender", function (v) { return v ? true : "Pick an option. “Prefer not to say” is fine."; }],
       ["f-sms", "e-sms", function () { return !smsRequired || byId("f-sms").checked || "Check this box so we can text you to confirm your class."; }]
     ];
     var check = function (r) {
@@ -448,7 +274,7 @@
       submitBtn.disabled = true;
       submitBtn.setAttribute("aria-busy", "true");
       status.classList.remove("is-error");
-      status.textContent = "Sending\u2026";
+      status.textContent = "Sending…";
 
       var params = new URLSearchParams(new FormData(form)).toString();
       var ctrl = "AbortController" in window ? new AbortController() : null;
@@ -467,13 +293,8 @@
     });
   }
 
-  /* ---------- Map embed ---------- */
-  document.querySelectorAll("[data-map]").forEach(function (el) {
-    // The address card sits under the map, so a blocked or slow map still shows where to go.
-    el.innerHTML = '<div class="map-fallback"><strong>1401 Beulah Rd</strong><span>Suite 100, Winter Garden, FL 34787</span>' +
-      '<a class="btn btn--small btn--ghost" href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(HF.gym.mapsQuery) + '" rel="noopener">Get directions</a></div>' +
-      '<iframe title="Map to ' + esc(HF.gym.name) + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + encodeURIComponent(HF.gym.mapsQuery) + '&output=embed"></iframe>';
-  });
+  /* ---------- Map embed (only filled here if a page wasn't baked) ---------- */
+  document.querySelectorAll("[data-map]:empty").forEach(function (el) { el.innerHTML = B.map(); });
 
   /* ---------- Phone booking bar: appears after the first screen, hides near the footer ---------- */
   if (page !== "visit" && page !== "thanks" && "IntersectionObserver" in window) {
